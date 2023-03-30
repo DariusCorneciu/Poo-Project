@@ -1,0 +1,4 @@
+10 Sabie_de_Lemn 0 20 Padurea_Neagra
+30 Sabie_de_Fier 100 40 Lovitura_de_Fier
+50 Sabie_de_Cristal 3000 70 Dansul_Cristalelor
+100 Sabie_de_Corn_de_Unicorn 10000 200 Curcubeul_Unicornilor
