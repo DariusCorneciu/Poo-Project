@@ -22,7 +22,7 @@
 - Pentru retinerea acestui shop este folosita o lista inlantuita
 ### Sistem de level up
 - In clasa de player exista o metoda cu numele give_exp care iti creste experienta si tot odata nivelul.
-```cpp
+```p
 Formula folosita pentru exp:
-p.(level / amount_xp) ^ quickly_required_xp_per_level
+(level / amount_xp) ^ quickly_required_xp_per_level
 ```
