@@ -24,5 +24,5 @@
 - In clasa de player exista o metoda cu numele give_exp care iti creste experienta si tot odata nivelul.
 ```cpp
 Formula folosita pentru exp:
-(level / amount_xp) ^ quickly_required_xp_per_level
+p (level / amount_xp) ^ quickly_required_xp_per_level
 ```
