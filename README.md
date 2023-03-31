@@ -18,7 +18,7 @@
 ## Sisteme
 - Fiind un joc bazat pe text acesta foloseste clase pentru a instantia obiectele necesare pentru aceasa aventura.
 ### Sistem de Shop
-![matthieu-rappeneau-animated-wepon-sprits](https://user-images.githubusercontent.com/116907008/229104203-c20ea152-d67d-4cd0-91da-de361e7e9136.gif)
+![ddh4slr-82c38d93-e1a3-4414-9128-d8613670dc97](https://user-images.githubusercontent.com/116907008/229104732-183e6f08-ca71-4296-9075-951f53b0a17e.gif)
 
 - Cu acest sistem poti sa iti cumperi armament
 - Pentru retinerea acestui shop este folosita o lista inlantuita
@@ -29,8 +29,7 @@ Formula folosita pentru exp:
 (level / amount_xp) ^ quickly_required_xp_per_level
 ```
 ### Sistem de Farm
-![reecion-farminggame](https://user-images.githubusercontent.com/116907008/229104236-eb6ef41a-b1e1-4c71-a8a6-56803b1b7adb.gif)
-
+![konstantin-tonkonozhko-farmer-export](https://user-images.githubusercontent.com/116907008/229104750-6f6df8d6-ce2a-4b8d-bbac-3a5e47dc5ee0.jpg)
 - Si aici exista un shop in care se pot cumparara plante contra cost
 - Initial ai o parcela de 2x2 care este exsinsa tot cu bani
 - Poti planta oriunde in aceasta parcela
