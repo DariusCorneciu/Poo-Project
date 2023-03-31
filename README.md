@@ -26,3 +26,8 @@
 Formula folosita pentru exp:
 (level / amount_xp) ^ quickly_required_xp_per_level
 ```
+### Sistem de Farm
+- Si aici exista un shop in care se pot cumparara plante contra cost
+- Initial ai o parcela de 2x2 care este exsinsa tot cu bani
+- Poti planta oriunde in aceasta parcela
+- Fiecare planta are un anumit timp de asteptate pentru a creste
