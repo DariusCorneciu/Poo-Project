@@ -16,10 +16,17 @@ public:
     Ability() : ability_damage(0), ability_name(nullptr) {};
 
     Ability(const Ability &ability){
-        ability_damage = ability.ability_damage;
-        ability_name = new char [strlen(ability.ability_name)];
-        strcpy(ability_name,ability.ability_name);
+        if(ability.ability_name == nullptr){
+            delete [] ability_name;
+            ability_damage = 0;
+        }
+        else if(ability.ability_name == ability_name) {cout<<"Nu poti copia aceeasi abilitate!\n";}
+        else{
+            ability_damage = ability.ability_damage;
+            ability_name = new char [strlen(ability.ability_name)];
+            strcpy(ability_name,ability.ability_name);
 
+        }
     }
 
 
@@ -56,14 +63,6 @@ public:
     Weapon() {
         next = nullptr;
         weapon_name = nullptr;
-    }
-    Weapon(const Weapon &arma):abilitate(arma.abilitate){
-        price = arma.price;
-        damage = arma.damage;
-        weapon_name = new char [strlen(arma.weapon_name)];
-        strcpy(weapon_name,arma.weapon_name);
-        next = arma.next;
-
     }
 
     ~Weapon() {
@@ -251,10 +250,19 @@ public:
         grow_time = 0;
     }
     Plant(const Plant &plantuta){
+        if(plantuta.name == nullptr){
+            delete [] name;
+            price = 0;
+            grow_time = 0;
+
+        }
+        else if(plantuta.name == name){cout<<"Nu poti copia aceeasi planta!\n";}
+        else{
         price = plantuta.price;
         grow_time = plantuta.grow_time;
         name = new char [strlen(plantuta.name)];
         strcpy(name,plantuta.name);
+        }
     }
 
     ~Plant() {
@@ -573,7 +581,7 @@ char *Player::getPlayerName() const {
 
 class Farm {
 ///
-    char **parcel;
+    char ***parcel;
     int size;
 
 public:
@@ -582,11 +590,33 @@ public:
         parcel = nullptr;
     }
     Farm(const Farm &ferma):size(ferma.size){
-        parcel = new char *[size];
-        for(int i = 0;i < size;i++){
-            parcel[i] = new char [size];
-            for(int j = 0;j < size;j++)
-                parcel[i][j] = ferma.parcel[i][j];
+
+        if(ferma.parcel == nullptr){
+            if(parcel != nullptr){
+                for(int i = 0; i< size; i++)
+                    for(int j = 0; j< size;j++)
+                        delete [] parcel[i][j];
+
+                for( int i = 0;i <size;i++)
+                    delete [] parcel[i];
+
+                delete [] parcel;
+            }
+        }
+        else if(ferma.parcel == parcel){
+            cout<<"Nu poti copia aceeasi ferma\n";
+        }
+        else{
+            parcel = new char **[size];
+            for(int i = 0;i < size;i++){
+                parcel[i] = new char *[size];
+                for(int j = 0;j < size;j++){
+                    parcel[i][j] = new char [strlen(ferma.parcel[i][j])];
+                    strcpy(parcel[i][j],ferma.parcel[i][j]);
+
+                }
+
+            }
         }
 
     }
@@ -594,18 +624,25 @@ public:
     ~Farm() {
         if (parcel != nullptr) {
 
-            delete[] parcel;
+         for(int i = 0; i< size; i++)
+             for(int j = 0; j< size;j++)
+             delete [] parcel[i][j];
+
+         for( int i = 0;i <size;i++)
+             delete [] parcel[i];
+
+         delete [] parcel;
         }
     }
 
     void generate_farm(const int size = 2) {
         this->size = size;
-        parcel = new char *[this->size];
+        parcel = new char **[this->size];
         for (int i = 0; i < this->size; i++)
-            parcel[i] = new char[this->size];
+            parcel[i] = new char *[this->size];
         for (int i = 0; i < this->size; i++)
             for (int j = 0; j < this->size; j++)
-                parcel[i][j] = '0';
+                parcel[i][j] = new char [1], parcel[i][j] = "0";
     }
 
     int delete_farm() {  ///e un destructor, dar imi intoarce size. Eficient cand nu folosesc ferma, practic nu am nevoie de ea
@@ -622,7 +659,7 @@ public:
         int nr = 0;
         for (int i = 0; i < size; i++)
             for (int j = 0; j < size; j++)
-                if (parcel[i][j] == '0')
+                if ( strcmp(parcel[i][j],"0") == 0)
                     nr++;
         if (nr == size * size)
             return true;
@@ -634,7 +671,7 @@ public:
         int nr = 0;
         for (int i = 0; i < size; i++)
             for (int j = 0; j < size; j++)
-                if (parcel[i][j] != '0')
+                if (strcmp(parcel[i][j],"0") != 0)
                     nr++;
         if (nr == size * size)
             return true;
@@ -659,21 +696,21 @@ public:
         }
     }
 
-    char what_to_plant(Plant_Shop &magazin, int alegere) {
+    char* what_to_plant(Plant_Shop &magazin, int alegere) {
         alegere = alegere - 1;
         Plant *lista = magazin.getList();
-        char *nume = lista[alegere].getName();
-        return nume[0];
+        return lista[alegere].getName();
 
     }
 
-    void where_to_plant(char choise) {
+    void where_to_plant(char* choise) {
         int ok = 0;
         for(int i = 0; i<size;i++)
         {
             for(int j = 0 ;j<size;j++)
-                if(parcel[i][j] == '0'){
-                    parcel[i][j] = choise;
+                if(strcmp(parcel[i][j],"0") == 0){
+                    parcel[i][j] = new char [strlen(choise)];
+                    strcpy(parcel[i][j],choise);
                     ok = 1;
                     break;
                 }
@@ -693,7 +730,7 @@ public:
             for (int j = 0; j < this->size; j++) {
                 a[i][j] = -1;
                 for (int k = 0; k < magazin.getSize(); k++) {
-                    if (parcel[i][j] == magazin.getList()[k].getName()[0])
+                    if (strcmp(parcel[i][j],magazin.getList()[k].getName()) == 0)
                         a[i][j] = magazin.getList()[k].getGrowTime();
                 }
             }
@@ -742,8 +779,9 @@ public:
 
     int culege_planta(int index, int jndex, Plant_Shop const &magazin) {
         for (int i = 0; i < magazin.getSize(); i++)
-            if (parcel[index][jndex] == magazin.getList()[i].getName()[0]) {
-                parcel[index][jndex] = '0';
+            if (strcmp(parcel[index][jndex], magazin.getList()[i].getName()) ==0) {
+               parcel[index][jndex] = new char [1];
+                strcpy(parcel[index][jndex],"0");
                 cout << "Ai cules o planta de " << magazin.getList()[i].getName() << "\n";
                 cout << "Ai primit suma de "
                      << 2 * (magazin.getList()[i].getPrice()) + magazin.getList()[i].getPrice() / 2 << "$\n";
@@ -756,14 +794,14 @@ public:
 
 ostream &operator<<(ostream &out, const Farm &ferma) {
     for (int i = 0; i < ferma.size; i++)
-        out << "------";
+        out << "-------";
     out << "\n";
     for (int i = 0; i < ferma.size; i++) {
         for (int j = 0; j < ferma.size; j++)
-            out << "| " << ferma.parcel[i][j] << " | ";
+            out << "| " << ferma.parcel[i][j][0] <<ferma.parcel[i][j][1]<< " | ";
         out << "\n";
         for (int i = 0; i < ferma.size; i++)
-            out << "------";
+            out << "-------";
         out << "\n";
     }
     return out;
@@ -797,8 +835,7 @@ void planteaza(Farm &farm, Player &jucator,Plant_Shop &shop_plante){
     if(!farm.full_farm()){
         if (jucator.buy_plant(shop_plante, alegere)) {
             cout << "Ai cumparat planta cu succes!\n";
-            char initiala = farm.what_to_plant(shop_plante, alegere);
-            farm.where_to_plant(initiala);
+            farm.where_to_plant(farm.what_to_plant(shop_plante, alegere));
 
         }
     }
