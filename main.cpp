@@ -28,7 +28,10 @@ public:
 
         }
     }
-
+    ~Ability(){
+        if(ability_name != nullptr)
+            delete [] ability_name;
+    }
 
 
 
