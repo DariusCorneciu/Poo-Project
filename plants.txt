@@ -1,0 +1,9 @@
+10 5 Rosii
+30 7 Porumb
+50 12 Dovleac
+70 14 Cartofi
+90 16 Afine
+100 20 Struguri
+200 25 Mere
+300 27 Grau
+400 30 Hamei
