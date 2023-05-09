@@ -5,41 +5,56 @@
 #include <cmath>
 #include <conio.h>
 #include <algorithm>
+#include <string>
+#include <vector>
 
 using namespace std;
-
+/// de refacut cc
 class Ability {
     int ability_damage;
-    char *ability_name;
+    string ability_name;
 
 public:
-    Ability() : ability_damage(0), ability_name(nullptr) {};
+    Ability() : ability_damage(0), ability_name("") {};
 
     Ability(const Ability &ability){
-        if(ability.ability_name == nullptr){
-            delete [] ability_name;
-            ability_damage = 0;
+        if(ability.ability_name == ""){
+            if(ability_name != ""){
+                ability_name = "";
+                ability_damage = 0;
+            }
         }
         else if(ability.ability_name == ability_name) {cout<<"Nu poti copia aceeasi abilitate!\n";}
         else{
             ability_damage = ability.ability_damage;
-            ability_name = new char [strlen(ability.ability_name)];
-            strcpy(ability_name,ability.ability_name);
+            ability_name = ability.ability_name;
 
         }
     }
-    ~Ability(){
-        if(ability_name != nullptr)
-            delete [] ability_name;
+    ~Ability() = default;
+    bool operator== (const Ability &abilitate) const{
+        return (ability_name == abilitate.ability_name && ability_damage == abilitate.ability_damage);
     }
+    void operator = (const Ability &ability){
+        if(ability.ability_name == ""){
+            if(ability_name != ""){
+                ability_name = "";
+                ability_damage = 0;
+            }
+        }
+        else if(ability.ability_name == ability_name) {cout<<"Nu poti copia aceeasi abilitate!\n";}
+        else{
+            ability_damage = ability.ability_damage;
+            ability_name = ability.ability_name;
 
-
+        }
+    }
 
     int getAbilityDamage() const {
         return ability_damage;
     }
 
-    char *getAbilityName() const {
+    const string &getAbilityName() const {
         return ability_name;
     }
 
@@ -47,39 +62,61 @@ public:
         ability_damage = abilityDamage;
     }
 
-    void setAbilityName(char *abilityName) {
-        ability_name = new char[strlen(abilityName)];
-        strcpy(ability_name, abilityName);
+    void setAbilityName(const string &abilityName) {
+        ability_name = abilityName;
     }
+
 
 
 };
 
 class Weapon {
-    char *weapon_name;
+    string weapon_name;
     int price;
     Ability abilitate;
     int damage;
     Weapon *next;
 
 public:
-    Weapon() {
+    Weapon():abilitate() {
         next = nullptr;
-        weapon_name = nullptr;
+        price = 0;
+        weapon_name = "";
     }
 
+    Weapon(const Weapon &arma):abilitate(arma.abilitate){
+        if(arma.weapon_name == "" and arma.next == nullptr){
+            if(this->weapon_name != "" and this-> next != nullptr){
+                weapon_name = "";
+                delete next;
+                price = 0;
+                damage = 0;
+            }
+        }
+        else if(arma.weapon_name == this->weapon_name and (arma.next == this->next))
+        {cout<<"Nu poti copia acceasi arma\n";}
+        else{
+            if(this->weapon_name != "" and this-> next != nullptr) {
+                this->weapon_name = "";
+                delete this->next;
+            }
+            weapon_name = arma.weapon_name;
+            setNext(arma.next);
+            this->price = arma.price;
+            this->damage = arma.damage;
+        }
+
+    }
     ~Weapon() {
         if (next != nullptr)
             delete next;
-        if (weapon_name != nullptr)
-            delete[] weapon_name;
-    }
+        }
 
     int getPrice() const {
         return price;
     }
 
-    char *getWeaponName() const {
+    const string &getWeaponName() const {
         return weapon_name;
     }
 
@@ -95,8 +132,8 @@ public:
         //Weapon::abilitate = abilitate;
 // Noul vlog: E ora 4:00 si fac debug-ing de 4 ore si aici e problema, alta rezolvare nu am gasit decat sa folosesc
 // setter si getter din functia mama;)
-
-        this->abilitate.setAbilityName(abilitate.getAbilityName());
+        string nume(abilitate.getAbilityName());
+        this->abilitate.setAbilityName(nume);
         this->abilitate.setAbilityDamage(abilitate.getAbilityDamage());
 
     }
@@ -105,9 +142,8 @@ public:
         return next;
     }
 
-    void setWeaponName(char *weaponName) {
-        weapon_name = new char[strlen(weaponName)];
-        strcpy(weapon_name, weaponName);
+    void setWeaponName(string &weaponName) {
+        weapon_name = weaponName;
     }
 
     void setDamage(int damage) {
@@ -129,14 +165,14 @@ public:
     Shop() {
         start = nullptr;
     };
-
+    /// sa vorbesc cu majeri pentru cc
     ~Shop() {
         if (start != nullptr) {
             delete start;
         }
     }
 
-    void add_weapon(int dmg, char *name, int pret, int dmg_special, char *special_name) {
+    void add_weapon(int dmg, string &name, int pret, int dmg_special, string &special_name) {
         Ability abilitate;
         if (start == nullptr) {
             start = new Weapon();
@@ -162,43 +198,44 @@ public:
         }
     }
 
-    int find_weapon_price_by_name(char *name) {
+    int find_weapon_price_by_name(string &name) {
         Weapon *actual = start;
         while (actual->getNext() != nullptr) {
 
-            if (strcmp(actual->getWeaponName(),name) == 0)
+            if (actual->getWeaponName() == name)
                 return actual->getPrice();
             actual = actual->getNext();
         }
-        if (strcmp(actual->getWeaponName(),name) == 0)
+        if (actual->getWeaponName() == name)
             return actual->getPrice();
         return -1;
 
     }
 
-    char *find_weapon_by_index(int index) {
+    Weapon find_weapon_by_index(int index) {
         Weapon *actual = start;
+        Weapon ret;
+
         if(index < 1)
-            return "Invalid Index for a weapon!";
+            return ret;
         for (int i = 1; i < index; i++) {
             if (actual->getNext() != nullptr)
                 actual = actual->getNext();
             else
-                return "Invalid Index for a weapon!";
+                return ret;
         }
-        return actual->getWeaponName();
+
+        return *actual;
     }
 
     void citire_arme(const char *filename) {
         int dmg, pret, speciala;
-        char *nume, *nume_speciala, spatiu;
-        nume = new char[50];
-        nume_speciala = new char[30];
+        string nume, nume_speciala, spatiu;
         fstream file(filename);
 
 
-        while (file >> dmg && file.get(spatiu) && file.getline(nume, 40, ' ') && file >> pret && file >> speciala &&
-               file.get(spatiu) && file.getline(nume_speciala, 22, '\n')) {
+        while (file >> dmg && file>>nume && file >> pret && file >> speciala &&
+               file>>nume_speciala) {
             replacer(nume, '_', ' ');
             replacer(nume_speciala, '_', ' ');
             add_weapon(dmg, nume, pret, speciala, nume_speciala);
@@ -206,13 +243,11 @@ public:
 
         }
 
-        delete[] nume;
-        delete[] nume_speciala;
-    }
+        }
 
 private:
-    void replacer(char *nume, const char relpace, const char replace_with) {
-        for (int i = 0; i < strlen(nume); i++)
+    void replacer(string &nume, const char relpace, const char replace_with) {
+        for (int i = 0; i < nume.size(); i++)
             if (nume[i] == relpace)
                 nume[i] = replace_with;
 
@@ -227,53 +262,53 @@ ostream &operator<<(ostream &out, const Shop &arme) {
     out << "---------------------------\n";
     out << "|          SHOP           |\n";
     out << "---------------------------\n";
+    int i = 1;
     while (actual->getNext() != nullptr) {
         out << actual->getWeaponName() << "\n Damage:" << actual->getDamage() << "\n Price: " << actual->getPrice()
             << "\n";
         out << actual->getAbilitate().getAbilityName() << " | " << actual->getAbilitate().getAbilityDamage() << "\n";
-        out << "---------------------------\n";
+        out << "--------------"<<i<<"-------------\n";
+        i++;
         actual = actual->getNext();
     }
     out << actual->getWeaponName() << "\n Damage:" << actual->getDamage() << "\n Price: " << actual->getPrice() << "\n";
     out << actual->getAbilitate().getAbilityName() << " | " << actual->getAbilitate().getAbilityDamage() << "\n";
-    out << "---------------------------\n";
+    out << "--------------"<<i<<"-------------\n";
 
 
     return out;
 }
 
 class Plant { ///restructurat ca sa mearga intr-un vector de astrel de elemente
-    char *name;
+    string name;
     int price;
     int grow_time;
 public:
     Plant() {
-        name = nullptr;
+        name = "";
         price = 0;
         grow_time = 0;
     }
     Plant(const Plant &plantuta){
-        if(plantuta.name == nullptr){
-            delete [] name;
-            price = 0;
-            grow_time = 0;
+        if(plantuta.name == ""){
+            if(name != ""){
+                name = "";
+                price = 0;
+                grow_time = 0;
+            }
 
         }
         else if(plantuta.name == name){cout<<"Nu poti copia aceeasi planta!\n";}
         else{
         price = plantuta.price;
         grow_time = plantuta.grow_time;
-        name = new char [strlen(plantuta.name)];
-        strcpy(name,plantuta.name);
+        name = plantuta.name;
         }
     }
 
-    ~Plant() {
-        if (name != nullptr)
-            delete [] name;
-    }
+    ~Plant() = default;
 
-    char *getName() const {
+    const string &getName() const {
         return name;
     }
 
@@ -285,9 +320,8 @@ public:
         return grow_time;
     }
 
-    void setName(char *name) {
-        this->name = new char[strlen(name)];
-        strcpy(this->name, name);
+    void setName(const string &plantname) {
+        this->name = plantname;
     }
 
     void setPrice(int price) {
@@ -298,16 +332,15 @@ public:
         grow_time = growTime;
     }
     void operator=(const Plant &planta) {
-        if (planta.name != nullptr) {
-            this->name = new char[strlen(planta.name)];
-            strcpy(this->name, planta.name);
+        if (planta.name != "") {
+            this->name = planta.name;
             this->grow_time = planta.grow_time;
             this->price = planta.price;
-        } else if (planta.name == nullptr) {
-            delete[] this->name;
+        } else if (planta.name == "") {
+            this->name = "";
             grow_time = 0;
             price = 0;
-        } else if (strcmp(this->name, planta.name) == 0) {
+        } else if (this->name == planta.name) {
             cout << "Nu poti copia aceeasi planta!\n";
         }
     }
@@ -319,12 +352,8 @@ public:
 
 };
 istream &operator>>(istream &in, Plant &plantuta){
-    char *aux = new char [20];
     cout<<"Citeste numele plantei(20 caractere maxim): ";
-    in.getline(aux,20);
-    plantuta.name = new char [strlen(aux)];
-    strcpy(plantuta.name,aux);
-    delete [] aux;
+    in>>plantuta.name;
     plantuta.price = 0;
     plantuta.grow_time = 0;
     while(plantuta.price <= 0){
@@ -343,7 +372,23 @@ public:
         size = 0;
         list = nullptr;
     }
-
+    Plant_Shop(const Plant_Shop &magazin){
+        if(magazin.size){
+            if(this->size != 0){
+                this->size = 0;
+                delete [] list;
+            }
+        }
+        else if(this->list == magazin.list){cout<<"Nu poti copia aceeasi magazin de plante!\n";}
+        else{
+            this->size = magazin.size;
+            if(list != nullptr){delete [] list;}
+            list = new Plant [this->size];
+            for(int i = 0; i< this->size;i++){
+                this->list[i] = magazin.list[i];
+            }
+        }
+    }
     ~Plant_Shop() {
         if (list != nullptr)
             delete [] list;
@@ -357,10 +402,9 @@ public:
     void citire_plante(char *filename) { ///nu este completat, trebuie gandit
         ifstream file(filename);
         int pret, timp;
-        char nume[20];
-        ///asta e singura metoda fara sa folosec sting.
+        string nume;
         list = new Plant[20];
-        while (file >> pret && file >> timp && file.getline(nume, 20, ' ') && file.getline(nume, 20, '\n')) {
+        while (file >> pret && file >> timp && file >> nume) {
             list[size].setPrice(pret);
             list[size].setGrowTime(timp);
             list[size].setName(nume);
@@ -439,35 +483,94 @@ class Player {
     int level;
     float experience;
     int gold;
-    char *player_name;
-    char *sword;
+    string player_name;
+    class Arma{
+        string weapon_name;
+        int damage;
+        Ability speciala;
+    public:
+        Arma():weapon_name("Batz"),damage(10),speciala() {}
+        ~Arma() = default;
 
+        bool are_speciala(){
+            if(speciala.getAbilityDamage() == 0 and speciala.getAbilityName() =="")
+                return false;
+            else return true;
+        }
+
+        bool is_default(){
+            return (weapon_name == "Batz" && damage == 10 && are_speciala());
+        }
+        void setdefault(){
+           weapon_name = "Batz";
+           damage = 10;
+           speciala.setAbilityName("");
+           speciala.setAbilityDamage(0);
+        }
+        bool operator==(const Arma &weapon) const{
+        return (weapon_name == weapon.weapon_name && damage == weapon.damage && speciala == weapon.speciala);
+        }
+
+        void operator =(const Arma &weapon){
+            if(weapon.weapon_name == "Batz"){
+                setdefault();
+            }
+            else if(weapon.weapon_name == this->weapon_name) {cout<<"Nu poti sa copiezi aceeasi arma!\n";}
+            else {
+                weapon_name = weapon.weapon_name;
+                damage = weapon.damage;
+                speciala = weapon.speciala;
+            }
+        }
+        const string &GetWeaponName() const { return weapon_name;}
+        const int GetDamage() const {return damage;}
+        const Ability &GetSpeciala() const {return speciala;}
+
+        void SetWeaponName(const string &nume){this->weapon_name = nume;}
+        void SetDamage(const int &damage){this->damage = damage;}
+        void SetSpeciala(const Ability &abilitate){
+            speciala.setAbilityDamage(abilitate.getAbilityDamage());
+            string aux(abilitate.getAbilityName());
+            speciala.setAbilityName(aux);
+        }
+    }sword;
 public:
-    Player() : health_point(100), mana(100), level(1), experience(0), gold(100) {
+    Player() : health_point(100), mana(100), level(1), experience(0), gold(100),sword() {
 
-        strcpy(sword, "Batz");
-        player_name = nullptr;
+        player_name = "";
     }
-    Player(const Player &jucator): health_point(jucator.health_point),mana(jucator.mana),level(jucator.level),experience(jucator.experience),gold(jucator.gold){
-        player_name = new char [strlen(jucator.player_name)];
-        sword = new char[strlen(jucator.sword)];
-        strcpy(player_name,jucator.player_name);
-        strcpy(sword,jucator.sword);
+   Player(const Player &jucator){
+        if(jucator.player_name == ""){
+            if(this->player_name != ""){
+                player_name = "";
+                if(!sword.is_default()){
+                    sword.setdefault();
+                }
+                this->gold = 100;
+                this->level = 1;
+                this->health_point = 100;
+                this->experience = 0;
+                this->mana = 100;
 
+            }
+        }
+        else if (jucator.player_name == this->player_name){cout<<"Nu poti copia acelasi jucator!\n";}
+        else{
+            this->player_name = jucator.player_name;
+            this->gold = jucator.gold;
+            this->level = jucator.level;
+            this->health_point = jucator.health_point;
+            this->experience = jucator.experience;
+            this->mana = jucator.mana;
+            sword = jucator.sword;
+        }
     }
-
-    Player(const char *name) : Player() { //apeleaza intai constructorul fara parametrii si dupa aceaia se uita
+    Player(const string name) : Player() { //apeleaza intai constructorul fara parametrii si dupa aceaia se uita
         // la ce are el de facut in constructorul cu parametrii
-        player_name = new char[strlen(name)];
-        strcpy(player_name, name);
+        player_name = name;
     }
 
-    ~Player() {
-        if (player_name != nullptr)
-            delete[] player_name;
-        if (sword != nullptr)
-            delete[] sword;
-    }
+    ~Player() = default;
 
 
 
@@ -517,22 +620,26 @@ public:
     void weapon_upgrade(Shop &magazin,const int alegere) { ///daca nu punt &magazin o sa faca un nou obiect care are aceleasi
 /// adrese ca obiectul initial, iar cand vrea sa dea la destructor practic o sa incerce sa stearga de 2 ori aceeasi adresa;)
 
-        char *noua_arma = new char[strlen(magazin.find_weapon_by_index(alegere))];
-        strcpy(noua_arma, magazin.find_weapon_by_index(alegere));
-        int pretul = magazin.find_weapon_price_by_name(noua_arma);
-        if (this->gold >= pretul and strcmp(noua_arma,"Invalid Index for a weapon!") !=0) {
-            this->gold -= pretul;
-            this->sword = noua_arma;
-            cout << "Arma cumaparata cu succes!\n";
-        } else if (this->gold <pretul) {
+    Weapon noua_arma(magazin.find_weapon_by_index(alegere));
+
+        if (this->gold >= noua_arma.getPrice() and noua_arma.getPrice() > 0) {
+            if(noua_arma.getWeaponName() == sword.GetWeaponName()){cout<<"Ai deja arma asta!\n";}
+            else{
+                this->gold -= noua_arma.getPrice();
+                this->sword.SetDamage(noua_arma.getDamage());
+                this->sword.SetWeaponName(noua_arma.getWeaponName());
+                this->sword.SetSpeciala(noua_arma.getAbilitate());
+                cout << "Arma cumaparata cu succes!\n";
+            }
+        } else if (this->gold <noua_arma.getPrice()) {
             cout << "Nu ai destui bani!\n";
         }
-        else cout<<noua_arma;
+        else cout<<"Index invalid!\n";
     }
 
     int getGold() const;
 
-    char *getPlayerName() const;
+    const string &getPlayerName() const;
 
     friend istream &operator>>(istream &in, Player &player);
 
@@ -543,11 +650,7 @@ public:
 
 istream &operator>>(istream &in, Player &player) {
     cout << "Introdu numele tau(acesta poate avea maxim 16 caractere): ";
-    char *v = new char[16];
-    in.getline(v, 16);
-    player.player_name = new char[strlen(v)];
-    strcpy(player.player_name, v);
-    delete[] v;
+    in>>player.player_name;
     return in;
 
 }
@@ -561,7 +664,9 @@ ostream &operator<<(ostream &out, const Player &player) {
     out << "| HP: " << player.health_point << "\n";
     out << "| Mana: " << player.mana << "\n";
     out << "| Gold: " << player.gold << "\n";
-    out << "| Sword: " << player.sword << "\n";
+    out << "| Sword: " << player.sword.GetWeaponName() <<" | "<<player.sword.GetDamage()<< " damage\n";
+    out << "| Sword Ultimate: "<<player.sword.GetSpeciala().getAbilityName()<<" | "
+    <<player.sword.GetSpeciala().getAbilityDamage()<<" damage\n";
     if (player.level == 10)
         out << "| Level: Max Level\n";
     else
@@ -577,7 +682,7 @@ void Player::setGold(int gold) {
     Player::gold = gold;
 }
 
-char *Player::getPlayerName() const {
+const string &Player::getPlayerName() const {
     return player_name;
 }
 
@@ -592,38 +697,44 @@ public:
         size = 0;
         parcel = nullptr;
     }
-    Farm(const Farm &ferma):size(ferma.size){
-
-        if(ferma.parcel == nullptr){
+   Farm(const Farm &ferma){
+        if(ferma.size == 0){
             if(parcel != nullptr){
                 for(int i = 0; i< size; i++)
                     for(int j = 0; j< size;j++)
-                        delete [] parcel[i][j];
+                        delete [] this->parcel[i][j];
 
                 for( int i = 0;i <size;i++)
-                    delete [] parcel[i];
+                    delete [] this->parcel[i];
 
-                delete [] parcel;
+                this->size = 0;
+                delete [] this->parcel;
             }
         }
-        else if(ferma.parcel == parcel){
-            cout<<"Nu poti copia aceeasi ferma\n";
-        }
+        else if(this->parcel == ferma.parcel){cout<<"Nu poti copia acceasi ferma\n";}
         else{
-            parcel = new char **[size];
-            for(int i = 0;i < size;i++){
-                parcel[i] = new char *[size];
-                for(int j = 0;j < size;j++){
-                    parcel[i][j] = new char [strlen(ferma.parcel[i][j])];
-                    strcpy(parcel[i][j],ferma.parcel[i][j]);
+            if(parcel != nullptr){
+                for(int i = 0; i< size; i++)
+                    for(int j = 0; j< size;j++)
+                        delete [] this->parcel[i][j];
 
+                for( int i = 0;i <size;i++)
+                    delete [] this->parcel[i];
+
+                delete [] this->parcel;
+            }
+            this->size = ferma.size;
+            this->parcel = new char **[this->size];
+            for (int i = 0; i < this->size; i++)
+                this->parcel[i] = new char *[this->size];
+            for (int i = 0; i < this->size; i++)
+                for (int j = 0; j < this->size; j++){
+                    this->parcel[i][j] = new char [strlen(ferma.parcel[i][j])];
+                    strcpy(this->parcel[i][j],ferma.parcel[i][j]);
                 }
 
-            }
         }
-
     }
-
     ~Farm() {
         if (parcel != nullptr) {
 
@@ -699,21 +810,21 @@ public:
         }
     }
 
-    char* what_to_plant(Plant_Shop &magazin, int alegere) {
+    string what_to_plant(Plant_Shop &magazin, int alegere) {
         alegere = alegere - 1;
         Plant *lista = magazin.getList();
         return lista[alegere].getName();
 
     }
 
-    void where_to_plant(char* choise) {
+    void where_to_plant(string choise) {
         int ok = 0;
         for(int i = 0; i<size;i++)
         {
             for(int j = 0 ;j<size;j++)
                 if(strcmp(parcel[i][j],"0") == 0){
-                    parcel[i][j] = new char [strlen(choise)];
-                    strcpy(parcel[i][j],choise);
+                    parcel[i][j] = new char [choise.size()];
+                    strcpy(parcel[i][j],choise.c_str());
                     ok = 1;
                     break;
                 }
@@ -733,7 +844,7 @@ public:
             for (int j = 0; j < this->size; j++) {
                 a[i][j] = -1;
                 for (int k = 0; k < magazin.getSize(); k++) {
-                    if (strcmp(parcel[i][j],magazin.getList()[k].getName()) == 0)
+                    if (parcel[i][j] == magazin.getList()[k].getName())
                         a[i][j] = magazin.getList()[k].getGrowTime();
                 }
             }
@@ -782,7 +893,7 @@ public:
 
     int culege_planta(int index, int jndex, Plant_Shop const &magazin) {
         for (int i = 0; i < magazin.getSize(); i++)
-            if (strcmp(parcel[index][jndex], magazin.getList()[i].getName()) ==0) {
+            if (parcel[index][jndex] == magazin.getList()[i].getName()) {
                parcel[index][jndex] = new char [1];
                 strcpy(parcel[index][jndex],"0");
                 cout << "Ai cules o planta de " << magazin.getList()[i].getName() << "\n";
@@ -810,6 +921,79 @@ ostream &operator<<(ostream &out, const Farm &ferma) {
     return out;
 }
 
+
+class Monster{
+protected:
+    int health;
+    int damage;
+    string name;
+    Monster(){
+        vector<string> vec = {"Lovitura simpla","Lovitura de sabie","Lovitura cu arc","Lovitura cu prastia"};
+        int number = rand() % 4;
+        name = vec[number];
+    }
+public:
+   virtual void attack() = 0;
+   virtual void show_monster() = 0;
+   virtual ~Monster() = default;
+
+};
+class Minion : public Monster{
+    string type;
+    Ability speciala;
+public:
+    Minion():Monster(){
+        int random_number = rand() % 5 ; // generez random in constructor un type(eu nu stiu ce tipe e)
+        // de ce? pentru ca e mai fun
+        vector<string> vec = {"foc","apa","pamant","ghiata","lava","aer"};
+        type = vec[random_number];
+        random_number = rand() % 21 +10;
+        speciala.setAbilityDamage(random_number);
+        vec = {"Pumnul de ","Furtuna de ","Greierul de ","Furia de "};
+        if(random_number >=10 && random_number <=15){speciala.setAbilityName(vec[0]+type);}
+        else if(random_number >15 && random_number <=20){speciala.setAbilityName(vec[1]+type);}
+        else if(random_number >20 && random_number <=25){speciala.setAbilityName(vec[2]+type);}
+        else {{speciala.setAbilityName(vec[3]+type);}}
+
+        // pe partea de lovituri simple ale minionului lucrez mai jos
+        this->damage = rand() % 4 + 2; //random intre [2,5]
+        this->health = 100;
+    }
+    void show_monster() override{
+
+        /// de lucrat cu atentie
+        cout<<"Minionul de "<<type<<endl;
+        cout<<"Abilitate normala:\n";
+        cout<<this->name<<endl;
+        cout<<this->damage<<endl;
+        cout<<"Abilitate speciala:\n";
+        cout<<this->speciala.getAbilityName()<<endl;
+        cout<<this->speciala.getAbilityDamage()<<endl;
+
+
+    }
+    void attack() override{
+        cout<<"Minionul loveste";
+    }
+
+
+    ~Minion() = default;
+
+};
+class Boss: public Monster{
+
+};
+
+class Minion_Boss: public Minion,public Boss{
+    
+};
+
+/*
+       Mob
+Minion      Boss
+    Boss-Minion
+*/
+/*
 void loading_bar(char *unde){
     char *loading_bar = new char [16];
     char a = 177;
@@ -878,12 +1062,12 @@ void gold(Player &jucator){
 void menu_farm(Player &jucator){
     system("CLS");
     cout<<"|------------";
-    for(int i =0;i<strlen(jucator.getPlayerName());i++)
+    for(int i =0;i<jucator.getPlayerName().size();i++)
         cout<<"-";
     cout<<"|\n";
     cout<<"| Ferma lui "<<jucator.getPlayerName()<<" |\n";
     cout<<"|------------";
-    for(int i =0;i<strlen(jucator.getPlayerName());i++)
+    for(int i =0;i<jucator.getPlayerName().size();i++)
         cout<<"-";
     cout<<"|";
     cout<<"\n";
@@ -910,6 +1094,7 @@ void farming(Player &player, Farm &ferma, Plant_Shop &plante){
             case '5':gold(player);break;
         }
     }
+    cout<<"Press any key to get back\n";
 
 }
 
@@ -944,6 +1129,7 @@ void shopping(Player &player,Shop &magazin){
 
         }
     }
+    cout<<"Press any key to get back\n";
 
 }
 void statistici(Player &player){
@@ -982,6 +1168,7 @@ void intro(Player &player,Farm &ferma, Plant_Shop &plante, Shop &magazin){
     system("CLS");
     cin>>player;
     system("CLS");
+
     cout<<"Marian: \n";
     char *buna = new char [strlen("Buna ")];
     strcpy(buna,"Buna ");
@@ -989,8 +1176,8 @@ void intro(Player &player,Farm &ferma, Plant_Shop &plante, Shop &magazin){
         cout<<buna[i];
        Sleep(100);
     }
-    for(int i = 0;i < strlen(player.getPlayerName());i++){
-        cout<<player.getPlayerName()[i];
+    for(auto i = player.getPlayerName().begin();i < player.getPlayerName().end();i++){
+        cout<<*i;
       Sleep(100);
     }
     cout<<' ';
@@ -1036,6 +1223,7 @@ void developer(Player &player,Farm &ferma, Plant_Shop &plante, Shop &magazin){
 
         }
     }
+    cout<<"Press any key to get back\n";
 
 }
 void afis_start_menu(){
@@ -1075,3 +1263,14 @@ int main() {
       start_menu(jucator,ferma,shop_plante,arme);
      return 0;
 }
+*/
+int main(){
+    Minion *a =new Minion();
+    a->show_monster();
+    delete a;
+    a = new Minion();
+   // a->show_monster();
+    Sleep(10000);
+    return 0;
+}
+
