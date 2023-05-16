@@ -2164,6 +2164,7 @@ void the_game_menu(Player &player, Farm &ferma, vector<Shop*> magazine, Inventor
             case '2':farming(player,ferma, magazine,inventar_arme,inventar_plante,inventar_mobi);getch();break;
             case '3':shopping(player,magazine,inventar_arme,inventar_plante,inventar_mobi);getch();break;
             case '4':deschide_inventar(player,inventar_arme,inventar_plante,inventar_mobi);getch();break;
+            case '5':enter_cave(player,inventar_arme,inventar_plante,inventar_mobi);getch();break;
         }
     }
     exit(0);
