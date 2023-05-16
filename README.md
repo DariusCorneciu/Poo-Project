@@ -15,18 +15,34 @@
 - Fiind un joc bazat pe text acesta foloseste clase pentru a instantia obiectele necesare pentru aceasa aventura.
 ### Sistem de Shop
 ![ddh4slr-82c38d93-e1a3-4414-9128-d8613670dc97](https://user-images.githubusercontent.com/116907008/229104732-183e6f08-ca71-4296-9075-951f53b0a17e.gif)
-
-- Cu acest sistem poti sa iti cumperi armament
-- Pentru retinerea acestui shop este folosita o lista inlantuita
+- Acest sistem este facut printr-o interfata numita Shop
+- Exista in momentul de fata 2 shopuri: #arme, #plante
+```p
+class Shop{}
+class Weapon_Shop:public Shop{} ///este un vector de arme
+class Plant_Shop:public{} ///este un vector de plante
+```
 ### Sistem de level up
 - In clasa de player exista o metoda cu numele give_exp care iti creste experienta si tot odata nivelul.
 ```p
 Formula folosita pentru exp:
 (level / amount_xp) ^ quickly_required_xp_per_level
 ```
+### Sistem de Inventar
+Sistemul de inventar este bazat pe un template pentru a usura codul si a nu aveam 3 clase diferite pentru inventar.
+```p
+template <class inv>
+class Inventory{
+    vector <inv> items;
+```
+- Acesta este un vector de typename(in cazul meu inv)
+- Are diferite metode pentru a oferi un obiect, al arunca din inventar, a adauga un obiect in inventar
+
 ### Sistem de Farm
 ![konstantin-tonkonozhko-farmer-export](https://user-images.githubusercontent.com/116907008/229104750-6f6df8d6-ce2a-4b8d-bbac-3a5e47dc5ee0.jpg)
-- Si aici exista un shop in care se pot cumparara plante contra cost
 - Initial ai o parcela de 2x2 care este exsinsa tot cu bani
-- Poti planta oriunde in aceasta parcela
+- Pentru a incepe sa plantezi trebuie sa mergi la magazinul de plante pentru a-ti cumpara seminte
+- Semintele se gasesc in inventarul pentru plante
 - Fiecare planta are un anumit timp de asteptate pentru a creste
+- Cand plantele au crescut, o sa primesti o planta
+- Sistemul de crestere este facut pe un alt thread pentru a rula in fundal.
