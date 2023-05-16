@@ -1,4 +1,6 @@
-10 Sabie_de_Lemn 0 20 Padurea_Neagra
-30 Sabie_de_Fier 100 40 Lovitura_de_Fier
-50 Sabie_de_Cristal 3000 70 Dansul_Cristalelor
-100 Sabie_de_Corn_de_Unicorn 10000 200 Curcubeul_Unicornilor
+7 Grass_Sword 150 26 Blade_of_Grass aer
+20 Night_Sword 750 39 Nightosphere lava
+26 Wakizashi 1050 46 Susanoo foc
+33 Lightning_Sword 1500 52 Lightning_Fury apa
+39 Grape_Sword 2200 65 Grape_Juice gheata
+46 Sword_of_the_Dead 3000 72 Death_Dance pamant
