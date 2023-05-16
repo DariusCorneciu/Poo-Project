@@ -39,6 +39,8 @@ class Inventory{
 - Are diferite metode pentru a oferi un obiect, al arunca din inventar, a adauga un obiect in inventar
 
 ### Sistem de Pesteri
+![6d13119ec35d038c0649f6f4d5f2b9ad](https://github.com/DariusCorneciu/Poo-Project/assets/116907008/8baaaba9-721d-4e08-8651-b011c6894999)
+
 Aici este magia propriu zisa a codului. Sistemul se bazeaza pe o 4 clase care sunt mostenite in diamant:
 - Clasa de baza este o clasa abrstracta care viata, damage-ul, numele abilitatii normale, dar are in componenta si un vector static de Drop_Items
 - Totul in aceste clase a incercat sa se bazeze pe o componenta random
