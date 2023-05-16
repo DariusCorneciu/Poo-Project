@@ -18,20 +18,20 @@
 
 - Acest sistem este facut printr-o interfata numita Shop
 - Exista in momentul de fata 2 shopuri: #arme, #plante
-```p
+```cpp
 class Shop{}
 class Weapon_Shop:public Shop{} ///este un vector de arme
 class Plant_Shop:public{} ///este un vector de plante
 ```
 ### Sistem de level up
 - In clasa de player exista o metoda cu numele give_exp care iti creste experienta si tot odata nivelul.
-```p
+```cpp
 Formula folosita pentru exp:
 (level / amount_xp) ^ quickly_required_xp_per_level
 ```
 ### Sistem de Inventar
 Sistemul de inventar este bazat pe un template pentru a usura codul si a nu aveam 3 clase diferite pentru inventar.
-```p
+```cpp
 template <class inv>
 class Inventory{
     vector <inv> items;
@@ -49,7 +49,7 @@ Aici este magia propriu zisa a codului. Sistemul se bazeaza pe o 4 clase care su
 - Ultma clasa mosteneste clasele Minion si Boss si poate sa aiba defend sau dodge ca si abilitate.
 - Sistemul de pesteri este bazat pe un vector<Monster*> cave care are un numar de monstrii in functie de nivelul jucatorului. Ulterior acesta este amestecat, dar lasand boss-ul la final.
 Exemple de upcast si downcast in codul meu:
-```p
+```cpp
 try{
         Minion *minion = dynamic_cast<Minion*>(monstru);
     }catch(bad_cast &a){
@@ -68,7 +68,7 @@ try{
 - Fiecare planta are un anumit timp de asteptate pentru a creste
 - Cand plantele au crescut, o sa primesti o planta
 - Sistemul de crestere este facut pe un alt thread pentru a rula in fundal.
-```p
+```cpp
 thread lala([&](){
         planting =true;
         experienta_plante = ferma.farming(f)/2;
