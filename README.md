@@ -60,7 +60,8 @@ try{
             }
 ```
 ### Sistem de Farm
-![konstantin-tonkonozhko-farmer-export](https://user-images.githubusercontent.com/116907008/229104750-6f6df8d6-ce2a-4b8d-bbac-3a5e47dc5ee0.jpg)
+![Wheat_Farm_1619093296938](https://github.com/DariusCorneciu/Poo-Project/assets/116907008/df5bb66f-bad6-43e6-8a5b-b5ed90b0a977)
+
 - Initial ai o parcela de 2x2 care este exsinsa tot cu bani
 - Pentru a incepe sa plantezi trebuie sa mergi la magazinul de plante pentru a-ti cumpara seminte
 - Semintele se gasesc in inventarul pentru plante
