@@ -14,7 +14,7 @@
 ## Sisteme
 - Fiind un joc bazat pe text acesta foloseste clase pentru a instantia obiectele necesare pentru aceasa aventura.
 ### Sistem de Shop
-![dcxne1g-0d99927a-ed38-4da5-9797-f5165d28d26c](https://github.com/DariusCorneciu/Poo-Project/assets/116907008/6ed832d8-ecab-478d-9790-eddac1ae2356)
+![tumblr_p5flokH8161qbw2q1o1_1280](https://github.com/DariusCorneciu/Poo-Project/assets/116907008/1eb870af-92ff-44de-9934-d57af89eb068)
 
 - Acest sistem este facut printr-o interfata numita Shop
 - Exista in momentul de fata 2 shopuri: #arme, #plante
