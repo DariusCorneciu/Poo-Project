@@ -38,6 +38,24 @@ class Inventory{
 - Acesta este un vector de typename(in cazul meu inv)
 - Are diferite metode pentru a oferi un obiect, al arunca din inventar, a adauga un obiect in inventar
 
+### Sistem de Pesteri
+Aici este magia propriu zisa a codului. Sistemul se bazeaza pe o 4 clase care sunt mostenite in diamant:
+- Clasa de baza este o clasa abrstracta care viata, damage-ul, numele abilitatii normale, dar are in componenta si un vector static de Drop_Items
+- Totul in aceste clase a incercat sa se bazeze pe o componenta random
+- Clasele copil: Minion si Boss au abilitati diferite(una poate sa dea defend, ala dodge) pentru a avea sens sa se faca upcast si downcast.
+- Ultma clasa mosteneste clasele Minion si Boss si poate sa aiba defend sau dodge ca si abilitate.
+- Sistemul de pesteri este bazat pe un vector<Monster*> cave care are un numar de monstrii in functie de nivelul jucatorului. Ulterior acesta este amestecat, dar lasand boss-ul la final.
+Exemple de upcast si downcast in codul meu:
+```p
+try{
+        Minion *minion = dynamic_cast<Minion*>(monstru);
+    }catch(bad_cast &a){
+    try{
+        Boss *boss = dynamic_cast<Boss *>(monstru);
+        } catch(bad_cast &a) {
+            Minion_Boss *minionBoss = dynamic_cast<Minion_Boss *>(monstru);
+            }
+```
 ### Sistem de Farm
 ![konstantin-tonkonozhko-farmer-export](https://user-images.githubusercontent.com/116907008/229104750-6f6df8d6-ce2a-4b8d-bbac-3a5e47dc5ee0.jpg)
 - Initial ai o parcela de 2x2 care este exsinsa tot cu bani
@@ -46,3 +64,15 @@ class Inventory{
 - Fiecare planta are un anumit timp de asteptate pentru a creste
 - Cand plantele au crescut, o sa primesti o planta
 - Sistemul de crestere este facut pe un alt thread pentru a rula in fundal.
+```p
+thread lala([&](){
+        planting =true;
+        experienta_plante = ferma.farming(f)/2;
+        cout<<"|----------------------|\n";
+        cout<<"TI-AU CRESCUT PLANTELE |\n";
+        cout<<"|----------------------|\n";
+        Sleep(1000);
+
+    });
+    lala.detach();
+```
