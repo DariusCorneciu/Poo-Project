@@ -92,7 +92,7 @@ public:
     }
     ~Ability() = default;
     bool operator== (const Ability &abilitate) const{
-        return (ability_name == abilitate.ability_name && ability_damage == abilitate.ability_damage);
+        return (ability_name == abilitate.ability_name);
     }
     void operator = (const Ability &ability){
         if(ability.ability_name == ""){
@@ -133,11 +133,12 @@ class Weapon {
     string weapon_name;
     int price;
     string type;
+ int level;
     Ability abilitate;
     int damage;
 
 public:
-    Weapon():abilitate(),price(-1),weapon_name(""),damage(0),type("") {}
+    Weapon():abilitate(),price(-1),weapon_name(""),damage(0),type(""),level(1) {}
 
     Weapon(const Weapon &arma):abilitate(arma.abilitate){
         if(arma.weapon_name == ""){
@@ -145,6 +146,7 @@ public:
                 weapon_name = "";
                 type = "";
                 price = 0;
+                level = 1;
                 damage = 0;
             }
         }
@@ -154,6 +156,7 @@ public:
             weapon_name = arma.weapon_name;
             this->price = arma.price;
             this->type = arma.type;
+            this->level = arma.level;
             this->damage = arma.damage;
         }
 
@@ -162,6 +165,9 @@ public:
 
     int getPrice() const {
         return price;
+    }
+    int getLevel() const{
+        return level;
     }
     const string &getType() const{
         return type;
@@ -178,6 +184,10 @@ public:
         return abilitate;
     }
 
+    void setlevel(const int &lev){
+        level = lev;
+    }
+
     void setType(const string &tip){
         type = tip;
     }
@@ -191,10 +201,14 @@ public:
 
     }
     bool operator ==(const Weapon &arma) const{
-        return (arma.weapon_name == this->weapon_name and arma.abilitate ==this->abilitate
-                and arma.damage == this->damage and arma.price == this->price);
+        return (arma.weapon_name == this->weapon_name);
     }
 
+    void level_up(){
+        this->level = this->level+1;
+        this->damage = this->damage*1.2;
+        this->abilitate.setAbilityDamage(this->abilitate.getAbilityDamage()*1.2);
+    }
 
     void setWeaponName( const string &weaponName) {
         weapon_name = weaponName;
@@ -211,7 +225,8 @@ public:
     friend ostream & operator <<(ostream &out, const Weapon &arma);
 };
 ostream & operator <<(ostream &out, const Weapon &arma){
-    out<<arma.weapon_name<<"("<<arma.type<<")";
+    out<<arma.weapon_name<<"("<<arma.type<<") "<<"level: "<<arma.level<<endl;
+    //out<<arma.abilitate.getAbilityName()<<arma.abilitate.getAbilityDamage();
 }
 class Shop{
 public:
@@ -508,13 +523,11 @@ public:
     int getSize(){return items.size();}
     inv getItem(int index){return items[index];}
 
-    void del_item(inv item){
-        for(int i = 0; i<items.size();i++){
-            if(items[i] == item){
-                pop(i+1);
-                break;
-            }
-        }
+    void del_item(inv &item){
+
+        auto it = find(items.begin(),items.end(),item);
+        if(it!=items.end()){items.erase(it);}
+        else{cout<<"Nu am gasit!";}
     }
     void add_to_inventory(inv item){
         items.push_back(item);
@@ -545,10 +558,12 @@ class Player {
     class Arma{
         string weapon_name;
         int damage;
+        int level;
+        int pret;
         string type;
         Ability speciala;
     public:
-        Arma():weapon_name("Batz"),damage(1),speciala(),type("lemn") {}
+        Arma():weapon_name("Batz"),damage(1),speciala(),type("lemn"),level(1),pret(0) {}
         ~Arma() = default;
 
         bool are_speciala(){
@@ -563,12 +578,14 @@ class Player {
         void setdefault(){
             weapon_name = "Batz";
             damage = 1;
+            level = 1;
+            pret = 0;
             type = "lemn";
             speciala.setAbilityName("");
             speciala.setAbilityDamage(0);
         }
         bool operator==(const Arma &weapon) const{
-            return (weapon_name == weapon.weapon_name && damage == weapon.damage && speciala == weapon.speciala);
+            return (weapon_name == weapon.weapon_name);
         }
 
         void operator =(const Arma &weapon){
@@ -577,6 +594,8 @@ class Player {
             }
             else if(weapon.weapon_name == this->weapon_name) {cout<<"Nu poti sa copiezi aceeasi arma!\n";}
             else {
+                level = weapon.level;
+                pret = weapon.pret;
                 weapon_name = weapon.weapon_name;
                 damage = weapon.damage;
                 speciala = weapon.speciala;
@@ -587,7 +606,11 @@ class Player {
         const int GetDamage() const {return damage;}
         const Ability &GetSpeciala() const {return speciala;}
         const string &GetType() const {return type;}
+        const int GetLevel() const {return level;}
+        const int GetPret() const {return pret;}
 
+        void SetPret(const int pretu) {pret=pretu;}
+        void SetLevel(const int lvl){this->level = lvl;}
         void SetType(const string &nume){this->type = nume;}
         void SetWeaponName(const string &nume){this->weapon_name = nume;}
         void SetDamage(const int &dmg){this->damage = dmg;}
@@ -650,16 +673,47 @@ public:
     }
 
 
+    void weapon_level_up(Inventory<Weapon> &inventory){
+        if(sword.GetWeaponName() !="Batz"){
+
+            Weapon actuala(getArma());
+            if(actuala.getLevel() !=10){
+                if(this->gold >=1000*actuala.getLevel()){
+                    int lose = -1;//actuala.getLevel()*10;
+                    int random = rand()%100;
+                    inventory.del_item(actuala);
+                    if(random >=lose){
+                        actuala.level_up();
+                        actuala.setPrice(actuala.getPrice()*1.2);
+                        inventory.add_to_inventory(actuala);
+                        switch_weapon(inventory.getSize(),inventory);
+                        cout<<"Ai facut upgrade cu succes!\n";
+                    }else{
+                        if(inventory.getSize() >0){ switch_weapon(inventory.getSize(),inventory);}
+                        else{sword.setdefault();}
+                        cout<<"[Fierar]\nNu a functionat.Am esuat";
+                    }
+
+
+                }else{cout<<"Nu ai destui bani!\n";}
+            }else{cout<<"Ai atins level-ul maxim la aceasta arma\n";}
+            }else{cout<<"Nu poti sa faci upgrade la un batz\n";}
+
+
+
+
+    }
     void schimba_tipul(string posibil_tip,Inventory<Weapon> &inventory){
         //gold = 100000;
         if(this->gold >=1000 and sword.GetWeaponName() !="Batz"){
             pay(1000);
             int rand_number = rand()%101;
             if(rand_number >=40){
-                this->sword.SetType(posibil_tip);
                 Weapon actuala(getArma());
                 inventory.del_item(actuala);
+                actuala.setType(posibil_tip);
                 inventory.add_to_inventory(actuala);
+                switch_weapon(inventory.getSize(),inventory);
                 cout<<"Tip schimbat cu succes!\n Press ANY key to go back!\n";
             }
             else{
@@ -712,6 +766,7 @@ public:
                 this->sword.SetWeaponName(noua_arma.getWeaponName());
                 this->sword.SetSpeciala(noua_arma.getAbilitate());
                 this->sword.SetType(noua_arma.getType());
+                this->sword.SetPret(noua_arma.getPrice());
             }
         } else if (this->gold < noua_arma.getPrice()) {
             throw(No_Money());
@@ -719,12 +774,14 @@ public:
         else throw(Index_Invalid());
     }
     void switch_weapon(const int alegere,Inventory<Weapon> &inventar){
-        if(alegere-1 >= 0 and alegere-1 <=inventar.getSize() and inventar.getSize() != 0){
+        if(alegere-1 >= 0 and alegere-1 <inventar.getSize() and inventar.getSize() != 0){
             Weapon noua_arma(inventar.getItem(alegere-1));
             this->sword.SetDamage(noua_arma.getDamage());
             this->sword.SetWeaponName(noua_arma.getWeaponName());
             this->sword.SetSpeciala(noua_arma.getAbilitate());
             this->sword.SetType(noua_arma.getType());
+            this->sword.SetLevel(noua_arma.getLevel());
+            this->sword.SetPret(noua_arma.getPrice());
             cout<<"Noua ta arma este: "<<sword.GetWeaponName()<<endl;
         }
         else{
@@ -765,6 +822,8 @@ public:
         Weapon ret;
         ret.setType(sword.GetType());
         ret.setDamage(sword.GetDamage());
+        ret.setlevel(sword.GetLevel());
+        ret.setPrice(sword.GetPret());
         ret.setWeaponName(sword.GetWeaponName());
         ret.setAbilitate(sword.GetSpeciala());
         return ret;
@@ -796,6 +855,7 @@ ostream &operator<<(ostream &out, const Player &player) {
     out << "| Mana: " << player.mana << "\n";
     out << "| Gold: " << player.gold << "\n";
     out << "| Sword: " << player.sword.GetWeaponName() <<" | "<<player.sword.GetDamage()<< " damage\n";
+    out << "| Sword Level:"<<player.sword.GetLevel()<<endl;
     out << "| Sword Ultimate: "<<player.sword.GetSpeciala().getAbilityName()<<" | "
         <<player.sword.GetSpeciala().getAbilityDamage()<<" damage\n";
     if (player.level == 10)
@@ -1841,7 +1901,7 @@ void amanet(Player &player, Inventory<Weapon> &magazin_arme, Inventory<Plant> &m
     char input;
     cout<<endl<<"Ce vrei sa vinzi?\n[1] Arme\n[2] Seminte\n [3] Consumabile\n";input=getch();
     if(input == '1'){
-        if(magazin_plante.getSize() !=0){
+        if(magazin_arme.getSize() !=0){
             magazin_arme.show_inventory();
             cout<<"Alege:";
             cin>>ce;
@@ -1886,14 +1946,15 @@ void amanet(Player &player, Inventory<Weapon> &magazin_arme, Inventory<Plant> &m
 }
 void meniu_fierar(){
     system("CLS");
-    cout<<"|----------------------------------------|\n";
-    cout<<"| Fierarul Maiestos schimbator de tipuri |\n";
-    cout<<"|----------------------------------------|\n";
-    cout<<"[1] Aer\n";
-    cout<<"[2] Lava\n";
-    cout<<"[3] Foc\n";
-    cout<<"[4] Gheata\n";
-    cout<<"[5] Pamant\n";
+    cout<<"|-----------------------------|\n";
+    cout<<"| Fierarul Maiestos din Metin |\n";
+    cout<<"|-----------------------------|\n";
+    cout<<"[1] Schimba tipul in Aer\n";
+    cout<<"[2] Schimba tipul in Lava\n";
+    cout<<"[3] Schimba tipul in Foc\n";
+    cout<<"[4] Schimba tipul in Gheata\n";
+    cout<<"[5] Schimba tipul in Pamant\n";
+    cout<<"[6] Upgrade la arma\n";
     cout<<"[0] Exit \n";
 }
 int fieraro = 0;
@@ -1914,6 +1975,7 @@ void fierar(Player &jucator,Inventory<Weapon> &arme){
             case '3': jucator.schimba_tipul("foc",arme); getch(); break;
             case '4': jucator.schimba_tipul("gheata",arme); getch(); break;
             case '5': jucator.schimba_tipul("pamant",arme); getch(); break;
+            case '6': jucator.weapon_level_up(arme);getch(); break;
 
 
         }
@@ -2169,12 +2231,12 @@ void enter_cave(Player &player,Inventory<Weapon> &inventar_arme,Inventory<Plant>
     }
     unique_ptr<Monster> final_boss = unique_ptr<Monster>(bossFactory->createMonster());
     cave.push_back(std::move(final_boss));
-
+    int action=-1;
     random_shuffle(cave.begin(),cave.end()-1);
     for(int i = 0; i<cave.size();i++){
-        int action=-1;
         fighting_script(player,cave[i],inventar_arme,inventar_plante,action,inventar_mobi);
-        if( action== 0 or action == 2){break;}
+        if( action== 0 ){cout<<"Din pacate monstrii ti-au pus capat!";break;}
+        else if(action == 2){cout<<"Ai reusit sa scapi din pestera!";break;}
         else{
             cout<<"\nFelicitari, ai omorat un monstru.\nIn cenusa lui ai gasit "<<cave[i]->item_dropat().GetName();
             inventar_mobi.add_to_inventory(cave[i]->item_dropat());
@@ -2183,7 +2245,10 @@ void enter_cave(Player &player,Inventory<Weapon> &inventar_arme,Inventory<Plant>
         }
     }
     cave.clear();
-    cout<<"Press ANY key to go back!\n";
+    if(action!=0){
+        cout<<"Press ANY key to go back!\n";
+    }
+
 
 
 }
