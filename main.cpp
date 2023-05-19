@@ -16,13 +16,13 @@ using namespace std;
 
 class No_Money:public exception{
 public:
-    virtual const char* what() const noexcept{
-            cout<<"Nu ai destui bani pentru acest lucru!";
+    virtual  char* what() const noexcept{
+        cout<<"Nu ai destui bani pentru acest lucru!";
     }
 };
 class Index_Invalid:public exception{
 public:
-    virtual const char* what() const noexcept{
+    virtual  char* what() const noexcept{
         cout<<"Index invalid!";
     }
 };
@@ -40,7 +40,12 @@ public:
         name = vec[random];
 
     }
-    Drop_Item(string name,int price,int given_mana, int given_health):name(name),price(price),given_health(given_health),given_mana(given_mana){}
+    Drop_Item(string nume,int price,int given_mana, int given_health):price(price),given_health(given_health),given_mana(given_mana){
+      name=nume;
+      for(int i=0;i<name.size();i++){
+          if(name[i] == '_'){name[i]=' ';}
+      }
+    }
     ~Drop_Item() = default;
     void operator = (const Drop_Item &item){
         name = item.name;
@@ -176,18 +181,18 @@ public:
     void setType(const string &tip){
         type = tip;
     }
-    void setAbilitate(const Ability &abilitate) {
-        //Weapon::abilitate = abilitate;
+    void setAbilitate(const Ability &ability) {
+        //Weapon::ability = ability;
 // Noul vlog: E ora 4:00 si fac debug-ing de 4 ore si aici e problema, alta rezolvare nu am gasit decat sa folosesc
 // setter si getter din functia mama;)
-        string nume(abilitate.getAbilityName());
+        string nume(ability.getAbilityName());
         this->abilitate.setAbilityName(nume);
-        this->abilitate.setAbilityDamage(abilitate.getAbilityDamage());
+        this->abilitate.setAbilityDamage(ability.getAbilityDamage());
 
     }
     bool operator ==(const Weapon &arma) const{
         return (arma.weapon_name == this->weapon_name and arma.abilitate ==this->abilitate
-        and arma.damage == this->damage and arma.price == this->price);
+                and arma.damage == this->damage and arma.price == this->price);
     }
 
 
@@ -195,12 +200,12 @@ public:
         weapon_name = weaponName;
     }
 
-    void setDamage(int damage) {
-        Weapon::damage = damage;
+    void setDamage(int dmg) {
+        Weapon::damage = dmg;
     }
 
-    void setPrice(int price) {
-        Weapon::price = price;
+    void setPrice(int pret) {
+        Weapon::price = pret;
     }
 
     friend ostream & operator <<(ostream &out, const Weapon &arma);
@@ -217,7 +222,7 @@ public:
 };
 class Weapon_Shop:public Shop{
     int size;
-   vector<Weapon> list;
+    vector<Weapon> list;
 public:
     Weapon_Shop():size(0){}
     /// sa vorbesc cu majeri pentru cc
@@ -260,7 +265,7 @@ public:
 
         }
 
-        }
+    }
     void afisare() override{
 
         cout << "---------------------------\n";
@@ -269,7 +274,7 @@ public:
 
         for(int i = 0 ;i<size;i++){
             cout << list[i].getWeaponName() << "\n Damage:" << list[i].getDamage() << "\n Price: " << list[i].getPrice()
-                << "\n";
+                 << "\n";
             cout << list[i].getAbilitate().getAbilityName() << " | " << list[i].getAbilitate().getAbilityDamage() << "\n";
             cout << "--------------"<<i+1<<"-------------\n";
 
@@ -304,9 +309,9 @@ public:
         }
         else if(plantuta.name == name){cout<<"Nu poti copia aceeasi planta!\n";}
         else{
-        price = plantuta.price;
-        grow_time = plantuta.grow_time;
-        name = plantuta.name;
+            price = plantuta.price;
+            grow_time = plantuta.grow_time;
+            name = plantuta.name;
         }
     }
 
@@ -335,8 +340,8 @@ public:
         this->name = plantname;
     }
 
-    void setPrice(int price) {
-        Plant::price = price;
+    void setPrice(int pret) {
+        Plant::price = pret;
     }
 
     void setGrowTime(int growTime) {
@@ -433,7 +438,7 @@ public:
             if (i + 1 < 10)
                 cout << "-----------" << i + 1 << "------------\n";
             else
-               cout << "-----------" << i + 1 << "-----------\n";
+                cout << "-----------" << i + 1 << "-----------\n";
 
         }
 
@@ -471,7 +476,7 @@ istream &operator>>(istream &in, Plant_Shop &shop){
     }
     cin>>shop.list[shop.size-1];
 
-    }
+}
 
 
 vector<Plant> Plant_Shop::getList() const {
@@ -556,14 +561,14 @@ class Player {
             return (weapon_name == "Batz" && damage == 1 && are_speciala() && type == "lemn");
         }
         void setdefault(){
-           weapon_name = "Batz";
-           damage = 1;
-           type = "lemn";
-           speciala.setAbilityName("");
-           speciala.setAbilityDamage(0);
+            weapon_name = "Batz";
+            damage = 1;
+            type = "lemn";
+            speciala.setAbilityName("");
+            speciala.setAbilityDamage(0);
         }
         bool operator==(const Arma &weapon) const{
-        return (weapon_name == weapon.weapon_name && damage == weapon.damage && speciala == weapon.speciala);
+            return (weapon_name == weapon.weapon_name && damage == weapon.damage && speciala == weapon.speciala);
         }
 
         void operator =(const Arma &weapon){
@@ -585,7 +590,7 @@ class Player {
 
         void SetType(const string &nume){this->type = nume;}
         void SetWeaponName(const string &nume){this->weapon_name = nume;}
-        void SetDamage(const int &damage){this->damage = damage;}
+        void SetDamage(const int &dmg){this->damage = dmg;}
         void SetSpeciala(const Ability &abilitate){
             speciala.setAbilityDamage(abilitate.getAbilityDamage());
             string aux(abilitate.getAbilityName());
@@ -596,7 +601,7 @@ class Player {
 
         player_name = "";
     }
-   Player(const Player&) =delete;
+    Player(const Player&) =delete;
     Player& operator = (const Player&) = delete;
 public:
     static Player& Instanta(){
@@ -658,18 +663,18 @@ public:
                 cout<<"Tip schimbat cu succes!\n Press ANY key to go back!\n";
             }
             else{
-               Weapon arma_actuala(getArma());
-               inventory.del_item(arma_actuala);
+                Weapon arma_actuala(getArma());
+                inventory.del_item(arma_actuala);
                 if (inventory.getSize() > 0) { switch_weapon(1, inventory); }
                 else { sword.setdefault();}
                 cout<<"Schimbare esuata!\n Press ANY key to go back!\n";
 
             }
-                }
+        }
         else{cout<<"[Fierar]\n Nu ai bani sau ai un batz!\n";}
     }
-    void give_money(int gold) {
-        this->gold += gold;
+    void give_money(int aur) {
+        this->gold += aur;
     }
     void pay(int value){
         if(this->gold - value >= 0)
@@ -696,7 +701,7 @@ public:
     void weapon_upgrade(Weapon_Shop &magazin,const int alegere, Inventory<Weapon> &inventar) { ///daca nu punt &magazin o sa faca un nou obiect care are aceleasi
 /// adrese ca obiectul initial, iar cand vrea sa dea la destructor practic o sa incerce sa stearga de 2 ori aceeasi adresa;)
 
-    Weapon noua_arma(magazin.find_weapon_by_index(alegere));
+        Weapon noua_arma(magazin.find_weapon_by_index(alegere));
 
         if (this->gold >= noua_arma.getPrice() and noua_arma.getPrice() > 0) {
             if(noua_arma.getWeaponName() == sword.GetWeaponName()){cout<<"Ai deja arma asta!\n";}
@@ -707,14 +712,14 @@ public:
                 this->sword.SetWeaponName(noua_arma.getWeaponName());
                 this->sword.SetSpeciala(noua_arma.getAbilitate());
                 this->sword.SetType(noua_arma.getType());
-              }
+            }
         } else if (this->gold < noua_arma.getPrice()) {
             throw(No_Money());
         }
         else throw(Index_Invalid());
     }
     void switch_weapon(const int alegere,Inventory<Weapon> &inventar){
-        if(alegere-1 >= 0 and alegere-1 <=inventar.getSize()){
+        if(alegere-1 >= 0 and alegere-1 <=inventar.getSize() and inventar.getSize() != 0){
             Weapon noua_arma(inventar.getItem(alegere-1));
             this->sword.SetDamage(noua_arma.getDamage());
             this->sword.SetWeaponName(noua_arma.getWeaponName());
@@ -734,14 +739,14 @@ public:
             this->gold += (sell.getPrice() / 100) * 75;
             if (inventar.getSize() > 0) { switch_weapon(alegere, inventar); }
             else { sword.setdefault(); cout<<"Inventarul fiind gol, ai gasit un bat pe jos!\n"; }
-        }
+        }else{throw(Index_Invalid());}
     }
     void sell_p(const int alegere,Inventory<Plant> &inventar) {
         if (alegere - 1 >= 0 and alegere - 1 <= inventar.getSize()) {
             Plant sell(inventar.ret(alegere));
             inventar.pop(alegere);
             this->gold += (sell.getPrice() / 100) * 75;
-            }
+        }else{throw(Index_Invalid());}
     }
     void sell_drop(const int alegere,Inventory<Drop_Item> &inventar) {
         if (alegere - 1 >= 0 and alegere - 1 <= inventar.getSize()) {
@@ -792,7 +797,7 @@ ostream &operator<<(ostream &out, const Player &player) {
     out << "| Gold: " << player.gold << "\n";
     out << "| Sword: " << player.sword.GetWeaponName() <<" | "<<player.sword.GetDamage()<< " damage\n";
     out << "| Sword Ultimate: "<<player.sword.GetSpeciala().getAbilityName()<<" | "
-    <<player.sword.GetSpeciala().getAbilityDamage()<<" damage\n";
+        <<player.sword.GetSpeciala().getAbilityDamage()<<" damage\n";
     if (player.level == 10)
         out << "| Level: Max Level\n";
     else
@@ -804,8 +809,8 @@ int Player::getGold() const {
     return gold;
 }
 
-void Player::setGold(int gold) {
-    Player::gold = gold;
+void Player::setGold(int aur) {
+    Player::gold = aur;
 }
 
 const string &Player::getPlayerName() const {
@@ -823,7 +828,7 @@ public:
         size = 0;
         parcel = nullptr;
     }
-   Farm(const Farm &ferma){
+    Farm(const Farm &ferma){
         if(ferma.size == 0){
             if(parcel != nullptr){
                 for(int i = 0; i< size; i++)
@@ -864,14 +869,14 @@ public:
     ~Farm() {
         if (parcel != nullptr) {
 
-         for(int i = 0; i< size; i++)
-             for(int j = 0; j< size;j++)
-             delete [] parcel[i][j];
+            for(int i = 0; i< size; i++)
+                for(int j = 0; j< size;j++)
+                    delete [] parcel[i][j];
 
-         for( int i = 0;i <size;i++)
-             delete [] parcel[i];
+            for( int i = 0;i <size;i++)
+                delete [] parcel[i];
 
-         delete [] parcel;
+            delete [] parcel;
         }
     }
 
@@ -932,14 +937,14 @@ public:
         } else if (empty_farm() == false) {
             cout << "Ai ceva inca la crescut!\n";
         } else {
-        throw(No_Money());
+            throw(No_Money());
         }
     }
 
     string what_to_plant(Inventory<Plant> &inv_plant, int alegere,vector<Plant> &plant) {
 
-       Plant ret = inv_plant.ret(alegere);
-       plant.push_back(ret);
+        Plant ret = inv_plant.ret(alegere);
+        plant.push_back(ret);
         inv_plant.pop(alegere);
         return ret.getName();
 
@@ -1000,17 +1005,17 @@ public:
             Sleep(700); /// calcule, ca o sa piarda putin timp in cod, so scad din mili secunde ca sa nu se vada;)
 
         }
-    return gold;
+        return gold;
     }
 
     int culege_planta(int index, int jndex, Plant_Shop const &magazin) {
         for (int i = 0; i < magazin.getSize(); i++)
             if (parcel[index][jndex] == magazin.getList()[i].getName()) {
-               parcel[index][jndex] = new char [1];
+                parcel[index][jndex] = new char [1];
                 strcpy(parcel[index][jndex],"0");
-               // cout << "Ai cules o planta de " << magazin.getList()[i].getName() << "\n";
+                // cout << "Ai cules o planta de " << magazin.getList()[i].getName() << "\n";
                 //cout << "Ai primit suma de "
-                  //   << 2 * (magazin.getList()[i].getPrice()) + magazin.getList()[i].getPrice() / 2 << "$\n";
+                //   << 2 * (magazin.getList()[i].getPrice()) + magazin.getList()[i].getPrice() / 2 << "$\n";
                 return 2 * (magazin.getList()[i].getPrice()) + magazin.getList()[i].getPrice() / 2;
             }
     }
@@ -1064,6 +1069,7 @@ public:
         int ghealth;
         while(file>>nume && file>>pret && file>>gmana && file>>ghealth){
             Drop_Item insert(nume,pret,gmana,ghealth);
+
             posibil_drop.push_back(insert);
             size++;
         }
@@ -1074,14 +1080,14 @@ public:
     static int getSize(){return size;}
 
     virtual Drop_Item item_dropat(){return drop;}
-   virtual int attack() const = 0;
-   virtual void show_monster() const = 0;
-   virtual void damage_by_player(const Weapon &arma_player,const int alegere) = 0;
-   virtual bool is_dead() {
-       if(health > 0) return false;
-       return true;
-   }
-   virtual ~Monster() = default;
+    virtual int attack() const = 0;
+    virtual void show_monster() const = 0;
+    virtual void damage_by_player(const Weapon &arma_player,const int alegere) = 0;
+    virtual bool is_dead() {
+        if(health > 0) return false;
+        return true;
+    }
+    virtual ~Monster() = default;
 
 };
 vector<Drop_Item> Monster::posibil_drop ={};
@@ -1105,7 +1111,7 @@ public:
         else {speciala.setAbilityName(vec[3]+type);}
         generate_item();
         // pe partea de lovituri simple ale minionului lucrez mai jos
-       // this->damage = rand() % 4 + 2; random intre [2,5]
+        // this->damage = rand() % 4 + 2; random intre [2,5]
 
     }
     ~Minion() = default;
@@ -1158,7 +1164,7 @@ public:
             cout<<speciala.getAbilityDamage()<<" damage.";
             return this->speciala.getAbilityDamage();
         }
-            else{
+        else{
             cout<<"Minionul foloseste "<<this->name;
             cout<<' '<<damage<<" damage.";
             return this->damage;
@@ -1171,7 +1177,7 @@ public:
         return false;
     }
     void damage_by_player(const Weapon &arma_player,const int dmg_given_by_player) override{
-      int initial_health = health;
+        int initial_health = health;
         if(arma_player.getType() == type){
             int damage_given = dmg_given_by_player-((dmg_given_by_player /100)*25);
             health -=damage_given;
@@ -1186,11 +1192,11 @@ public:
             health -=damage_given;
         }
         else if((arma_player.getType() == "foc" and type =="apa") or
-               (arma_player.getType() =="lava" and type =="aer") or
-               (arma_player.getType() =="gheata" and type == "foc") or
-               (arma_player.getType() =="pamant" and type =="lava") or
-               (arma_player.getType() =="aer" and type == "pamant") or
-               (arma_player.getType() =="apa" and type =="gheata")){
+                (arma_player.getType() =="lava" and type =="aer") or
+                (arma_player.getType() =="gheata" and type == "foc") or
+                (arma_player.getType() =="pamant" and type =="lava") or
+                (arma_player.getType() =="aer" and type == "pamant") or
+                (arma_player.getType() =="apa" and type =="gheata")){
             int damage_given = dmg_given_by_player-((dmg_given_by_player /100)*40);
             health -=damage_given;
         }
@@ -1204,10 +1210,10 @@ public:
 class Boss: virtual public Monster{
     string type;
     string boss_name;
-    int level;
+    const int level = rand()%3+2;
     Ability speciala;
 public:
-    Boss():level(rand()%3+2),Monster(level*100,rand()%5+5){
+    Boss():Monster(level*100,rand()%5+5){
         int random_number = rand() % 5 ; // generez random in constructor un type(eu nu stiu ce tipe e)
         // de ce? pentru ca e mai fun
         vector<string> vec = {"foc","apa","pamant","gheata","lava","aer"};
@@ -1273,13 +1279,13 @@ public:
     int attack() const override {
         int random_number = rand()% 101;
         if(random_number >=70){
-            cout<<boss_name<<" isi incarca "<<this->speciala.getAbilityName()<<endl;
-            cout<<speciala.getAbilityDamage()<<"DMG";
+            cout<<boss_name<<" isi incarca "<<this->speciala.getAbilityName()<<' ';
+            cout<<speciala.getAbilityDamage()<<"damage ";
             return this->speciala.getAbilityDamage();
         }
         else{
-            cout<<boss_name<<"  foloseste "<<this->name;
-            cout<<this->damage<<"DMG";
+            cout<<boss_name<<"  foloseste "<<this->name<<' ';
+            cout<<this->damage<<" damage.";
             return this->damage;
         }
 
@@ -1351,21 +1357,21 @@ public:
     int attack() const override {
         int random_number = rand()% 101;
         if(random_number >=70){
-            cout<<mini_name<<" isi incarca "<<this->speciala.getAbilityName()<<endl;
-            cout<<speciala.getAbilityDamage()<<"DMG";
+            cout<<mini_name<<" isi incarca "<<this->speciala.getAbilityName()<<' ';
+            cout<<speciala.getAbilityDamage()<<" damage";
             return this->speciala.getAbilityDamage();
         }
         else{
-            cout<<mini_name<<" foloseste "<<this->name;
-            cout<<damage<<"DMG";
+            cout<<mini_name<<" foloseste "<<this->name<<' ';
+            cout<<damage<<" damage";
             return this->damage;
         }
 
     }
     string getMiniName() const {return mini_name;}
     int defend_or_dodge() {
-       /// 1 daca defend 0 daca dodge
-       return traint;
+        /// 1 daca defend 0 daca dodge
+        return traint;
     }
     void show_monster() const override {
 
@@ -1407,38 +1413,38 @@ public:
         cout<<"HP: "<<health;
 
     }
-            void damage_by_player(const Weapon &arma_player,const int dmg_given_by_player) override{
-                    int initial_health = health;
-                    if(arma_player.getType() == type){
-                        int damage_given = dmg_given_by_player-((dmg_given_by_player /100)*25);
-                        health -=damage_given;
-                    }
-                    else if((arma_player.getType() == "apa" and type =="foc") or
-                    (arma_player.getType() =="aer" and type =="lava") or
-                    (arma_player.getType() =="foc" and type == "gheata") or
-                    (arma_player.getType() =="lava" and type =="pamant") or
-                    (arma_player.getType() =="pamant" and type == "aer") or
-                    (arma_player.getType() =="gheata" and type =="apa")){
-                        int damage_given = dmg_given_by_player+((dmg_given_by_player /100)*25);
-                        health -=damage_given;
-                    }
-                    else if((arma_player.getType() == "foc" and type =="apa") or
-                    (arma_player.getType() =="lava" and type =="aer") or
-                    (arma_player.getType() =="gheata" and type == "foc") or
-                    (arma_player.getType() =="pamant" and type =="lava") or
-                    (arma_player.getType() =="aer" and type == "pamant") or
-                    (arma_player.getType() =="apa" and type =="gheata")){
-                        int damage_given = dmg_given_by_player-((dmg_given_by_player /100)*40);
-                        health -=damage_given;
-                    }
-                    else {health -= dmg_given_by_player;}
+    void damage_by_player(const Weapon &arma_player,const int dmg_given_by_player) override{
+        int initial_health = health;
+        if(arma_player.getType() == type){
+            int damage_given = dmg_given_by_player-((dmg_given_by_player /100)*25);
+            health -=damage_given;
+        }
+        else if((arma_player.getType() == "apa" and type =="foc") or
+                (arma_player.getType() =="aer" and type =="lava") or
+                (arma_player.getType() =="foc" and type == "gheata") or
+                (arma_player.getType() =="lava" and type =="pamant") or
+                (arma_player.getType() =="pamant" and type == "aer") or
+                (arma_player.getType() =="gheata" and type =="apa")){
+            int damage_given = dmg_given_by_player+((dmg_given_by_player /100)*25);
+            health -=damage_given;
+        }
+        else if((arma_player.getType() == "foc" and type =="apa") or
+                (arma_player.getType() =="lava" and type =="aer") or
+                (arma_player.getType() =="gheata" and type == "foc") or
+                (arma_player.getType() =="pamant" and type =="lava") or
+                (arma_player.getType() =="aer" and type == "pamant") or
+                (arma_player.getType() =="apa" and type =="gheata")){
+            int damage_given = dmg_given_by_player-((dmg_given_by_player /100)*40);
+            health -=damage_given;
+        }
+        else {health -= dmg_given_by_player;}
 
-                    cout<<"Minionul a fost lovit cu succes!\n I-ai dat "<<initial_health-health<<" damage. ";
-            }
+        cout<<"Minionul a fost lovit cu succes!\n I-ai dat "<<initial_health-health<<" damage. ";
+    }
 
 
 
-        };
+};
 
 class Factory{
 public:
@@ -1463,9 +1469,9 @@ public:
         return new Minion_Boss();
     }
 };
-void loading_bar(char *unde) {
+void loading_bar(const char *unde) {
     char *loading_bar = new char[16];
-    char a = 177;
+    char a = char(177);
     strcpy(loading_bar, "...............");
     for (int i = 0; i < 15; i++) {
         system("CLS");
@@ -1480,46 +1486,46 @@ void loading_bar(char *unde) {
 }
 
 void dialog_cu_personaje(string nume_personaj="",string mesaj1_67="",string mesaj2_67="",string mesaj3_67="") {
-        atomic <bool> exit(false);
-        cout<<"| Pentru a da SKIP apasa tasta [Q] |\n";
+    atomic <bool> exit(false);
+    cout<<"| Pentru a da SKIP apasa tasta [Q] |\n";
 
-        thread t1([&](){
-            cout << "[ ";
-            for (auto i = nume_personaj.begin(); i < nume_personaj.end(); i++) {
-                cout << *i;
-                if(exit == true) {
-                    break;
-                }
-                Sleep(100);
+    thread t1([&](){
+        cout << "[ ";
+        for (auto i = nume_personaj.begin(); i < nume_personaj.end(); i++) {
+            cout << *i;
+            if(exit) {
+                break;
             }
-            cout << " ]\n";
-            for (auto i = mesaj1_67.begin(); i < mesaj1_67.end(); i++) {
-                cout << *i;
-                if(exit == true) {
-                    break;
-                }
-                Sleep(100);
-            }
-            cout << "\n";
-            for (auto i = mesaj2_67.begin(); i < mesaj2_67.end(); i++) {
-                cout << *i;
-                if(exit == true) {
-                    break;
-                }
-                Sleep(100);
-            }
-            cout << "\n";
-            for (auto i = mesaj3_67.begin(); i < mesaj3_67.end(); i++) {
-                cout << *i;
-                if(exit == true) {
-                    break;
-                }
-                Sleep(100);
-            }
-            cout << endl;
             Sleep(100);
-        });
-     char choise = 'p';
+        }
+        cout << " ]\n";
+        for (auto i = mesaj1_67.begin(); i < mesaj1_67.end(); i++) {
+            cout << *i;
+            if(exit) {
+                break;
+            }
+            Sleep(100);
+        }
+        cout << "\n";
+        for (auto i = mesaj2_67.begin(); i < mesaj2_67.end(); i++) {
+            cout << *i;
+            if(exit) {
+                break;
+            }
+            Sleep(100);
+        }
+        cout << "\n";
+        for (auto i = mesaj3_67.begin(); i < mesaj3_67.end(); i++) {
+            cout << *i;
+            if(exit) {
+                break;
+            }
+            Sleep(100);
+        }
+        cout << endl;
+        Sleep(100);
+    });
+    char choise = 'p';
     while(choise != 'q'){
         choise = getch();
         if(choise == 'q'){
@@ -1528,7 +1534,7 @@ void dialog_cu_personaje(string nume_personaj="",string mesaj1_67="",string mesa
             cout<<"Tocmai ai dat skip...";
             Sleep(300);
             system("CLS");
-            }
+        }
     }
     t1.join();
 }
@@ -1549,29 +1555,40 @@ void ghiozdan_menu(){
 
 void deschide_inventar_arme(Player &jucator,Inventory<Weapon> &inventar_arme){
     system("CLS");
-    inventar_arme.show_inventory();
-    int input;
-    cout<<endl<<"Arma actuala: "<<jucator.getArma()<<endl;
-    cout<<"Doresti sa iti schimbi arma?[0/1]:\n";cin>>input;
-    if(input == 1){
-        system("CLS");
+    if(inventar_arme.getSize() !=0){
         inventar_arme.show_inventory();
-        cout<<"Ce arma ?:";cin>>input;
-        try{
-            jucator.switch_weapon(input,inventar_arme);
-        }
-        catch(const Index_Invalid& ex){
-            cout<<ex.what();
-        }
-        cout<<"Arma schimbata cu succes. Press ANY key to go back.\n";
+
+        int input;
+        cout<<endl<<"Arma actuala: "<<jucator.getArma()<<endl;
+        cout<<"Doresti sa iti schimbi arma?[0/1]:\n";cin>>input;
+        if(input == 1){
+            system("CLS");
+            inventar_arme.show_inventory();
+            cout<<"Ce arma ?:";cin>>input;
+            try{
+                jucator.switch_weapon(input,inventar_arme);
+                cout<<"Arma schimbata cu succes.\n";
+            }
+            catch(const Index_Invalid& ex){
+                cout<<ex.what();
+            }
+    }else{cout<<"Am inteles ca nu doresti sa iti schimbi arma!\n";}
+
+
+
+    }else{
+        cout<<"Inventar gol, nu ai ce arme sa schimbi!\n";
     }
+    cout<<"Press ANY key to go back.\n";
 }
 void deschide_inventar_plante(Inventory<Plant> &inventar_plante){
     system("CLS");
     inventar_plante.show_inventory();
+    cout<<"\nPress ANY key to go back!";
 }
 void deschide_inventar_drop(Player &player,Inventory<Drop_Item> &inventar_drop){
     system("CLS");
+    if(inventar_drop.getSize() !=0){
     inventar_drop.show_inventory();
     int alegere;
     cout<<"Vrei sa consumi ceva?: ";cin>>alegere;
@@ -1582,7 +1599,11 @@ void deschide_inventar_drop(Player &player,Inventory<Drop_Item> &inventar_drop){
         player.give_mana(mancat.GetMana());
 
     }catch(const Index_Invalid &ex){cout<<ex.what();}
+    }else{
+        cout<<"Nu ai ce sa mananci!\n";
     }
+    cout<<"Press ANY key to go back\n";
+}
 void deschide_inventar(Player &jucator,Inventory<Weapon> &inventar_arme,Inventory<Plant> &inventar_plante, Inventory<Drop_Item> &inventar_mobi){
     char choise = 'p';
     while(choise != '0'){
@@ -1610,23 +1631,26 @@ vector<Plant> drops;
 void planteaza(Farm &farm, Player &jucator,Inventory<Weapon> &inventar_arme,Inventory<Plant> &inventar_plante){ //geko
     system("CLS");
     cout<<"Iti deschizi ghiozdanul si te uiti in buzunarul cu seminte...\n";
-    Sleep(2000);
+    Sleep(1000);
     system("CLS");
-    inventar_plante.show_inventory();
-    cout<<"Ce planta alegi?";
-    int alegere;
-    cin >> alegere;
-    if(!farm.full_farm()){
-        try{
-            farm.where_to_plant(farm.what_to_plant(inventar_plante,alegere,drops));
-        }catch(Index_Invalid &ex){cout<<ex.what();}
+    if(inventar_plante.getSize() !=0){
+        inventar_plante.show_inventory();
+        cout<<"Ce planta alegi?";
+        int alegere;
+        cin >> alegere;
+        if(!farm.full_farm()){
+            try{
+                farm.where_to_plant(farm.what_to_plant(inventar_plante,alegere,drops));
+            }catch(Index_Invalid &ex){cout<<ex.what();}
+        }
+        else{
+            cout<<"Ferma este plina si nu mai poti planta nimic \n";
+        }
+    }else{
+        cout<<"Inventarul este gol, nu ai ce sa plantezi\n Mergi la magazin sa iti cumperi seminte!\n";
     }
-    else{
-        cout<<"Ferma este plina si nu mai poti planta nimic \n";
-    }
-    char a;
-    cout<<"Press ENTER to get back\n";
-    a = getch();
+
+    cout<<"Press ANY to get back\n";
 }
 
 void showfarm(Farm &ferma){
@@ -1648,7 +1672,7 @@ void gold(Player &jucator){
 atomic<bool> planting{false};
 atomic<float> experienta_plante = 0;
 
-    void colect_gold(Player &player,Inventory<Drop_Item> &inventar_mobi){
+void colect_gold(Player &player,Inventory<Drop_Item> &inventar_mobi){
     system("CLS");
     planting = false;
     cout<<"Tocmai ce ai cules recolta!\n Acum poti sa o vinzi sau sa o consumi!";
@@ -1661,9 +1685,10 @@ atomic<float> experienta_plante = 0;
 
 }
 void pleaca_thread(Farm &ferma, vector<shared_ptr<Shop>> &magazine){
-        system("CLS");
+    system("CLS");
+    if(!ferma.empty_farm()){
         cout<<"Ai terminat de plantat si de udat plantele.\n Trebuie sa astepti pana cresc, dar nu trebuie sa le pazesti...\n"
-              <<"Trebuie sa vii inapoi sa le si culegi...\n";
+            <<"Trebuie sa vii inapoi sa le si culegi...\n";
         shared_ptr<Plant_Shop> magazinul_thread;
         for(auto i = magazine.begin(); i<magazine.end();i++){
             if(dynamic_cast<Plant_Shop*>(i->get()) != nullptr){
@@ -1672,17 +1697,20 @@ void pleaca_thread(Farm &ferma, vector<shared_ptr<Shop>> &magazine){
             }
         }
 
-    thread lala([&](){
-        planting =true;
-        experienta_plante = ferma.farming(*magazinul_thread)/2;
-        cout<<"|----------------------|\n";
-        cout<<"TI-AU CRESCUT PLANTELE |\n";
-        cout<<"|----------------------|\n";
-        Sleep(1000);
+        thread lala([&](){
+            planting =true;
+            experienta_plante = ferma.farming(*magazinul_thread)/2;
+            cout<<"|----------------------|\n";
+            cout<<"TI-AU CRESCUT PLANTELE |\n";
+            cout<<"|----------------------|\n";
+            Sleep(1000);
 
-    });
-    lala.detach();
-    }
+        });
+        lala.detach();
+    }else{cout<<"Ferma este goala, planteaza ceva!\n";}
+    cout<<"Press ANY key to go back!\n";
+
+}
 void menu_farm(Player &jucator){
     system("CLS");
     cout<<"|------------";
@@ -1727,7 +1755,7 @@ void farming(Player &player, Farm &ferma, vector<shared_ptr<Shop>> &magazine, In
         switch(choise){
             if(!planting){
                 case '1':farm_upgrade(player,ferma);break;
-                case '2':planteaza(ferma,player,inventar_arme,inventar_plante);break;
+                case '2':planteaza(ferma,player,inventar_arme,inventar_plante);getch();break;
                 case '3':showfarm(ferma);break;
                 case '4':pleaca_thread(ferma,magazine);getch();break;
 
@@ -1766,7 +1794,8 @@ void magazin_arme(vector<shared_ptr<Shop>> &magazine, Player &jucator, Inventory
     }
     catch(No_Money &ex1){cout<<ex1.what();}
     catch(Index_Invalid &ex2){cout<<ex2.what();}
-    }
+    catch(exception &e){cout<<"Index invalid!";}
+}
 void cumpara_plante(vector<shared_ptr<Shop>> &magazine, Player&jucator, Inventory<Plant> &inventar_plante){
     system("CLS");
     shared_ptr<Plant_Shop> copy;
@@ -1778,15 +1807,24 @@ void cumpara_plante(vector<shared_ptr<Shop>> &magazine, Player&jucator, Inventor
     }
 
     copy->afisare();
-    int input;
+    int input,input2;
     cout<<"Ce planta cumperi?:";
     cin>>input;
-    try{
-        jucator.buy_plant(*copy,input,inventar_plante);
-        cout<<"Planta cumparat cu succes.Press ANY key to go back!\n";
-    }
-    catch(No_Money &ex1){cout<<ex1.what();}
-    catch(Index_Invalid &ex2){cout<<ex2.what();}
+    cout<<"Cate plante vrei sa cumperi?:";
+    cin>>input2;
+    if(input2 >0){
+        try{
+            for(int i = 0;i<input2;i++){
+             jucator.buy_plant(*copy,input,inventar_plante);
+            }
+            cout<<"Plantele cumparate cu succes!";
+        }
+        catch(Index_Invalid &ex2){cout<<ex2.what();}
+        catch(No_Money &ex1){cout<<"Nu ai avut bani pentru toate plantele, dar ai cumparat cate ai putut!";}
+
+    }else{cout<<"Nu poti cumpara 0 plante!";}
+    cout<<"\nPress ANY key to go back!";
+
 
 }
 int ok = 0;
@@ -1801,27 +1839,48 @@ void amanet(Player &player, Inventory<Weapon> &magazin_arme, Inventory<Plant> &m
     }
     int ce;
     char input;
-    cout<<endl<<"Ce vrei sa vinzi?\n[1] Arme\n[2] Plante\n [3] Consumabile\n";input=getch();
+    cout<<endl<<"Ce vrei sa vinzi?\n[1] Arme\n[2] Seminte\n [3] Consumabile\n";input=getch();
     if(input == '1'){
-        magazin_arme.show_inventory();
-        cout<<"Alege:";
-        cin>>ce;
-        player.sell_weapon(ce,magazin_arme);
-        cout<<"Arma vanduta cu succes!. Press ANY key to go back";
+        if(magazin_plante.getSize() !=0){
+            magazin_arme.show_inventory();
+            cout<<"Alege:";
+            cin>>ce;
+            try{
+                player.sell_weapon(ce,magazin_arme);
+                cout<<"Arma vanduta cu succes!";
+
+            }catch(Index_Invalid &e){cout<<e.what();}
+        }else{cout<<"Nu ai nimic in inventar!\n";}
+
+        cout<<"\nPress ANY key to go back";
     }
     else if(input == '2'){
-        magazin_plante.show_inventory();
-    cout<<"Alege:";
-    cin>>ce;
-    player.sell_p(ce,magazin_plante);
-    cout<<"Samanta vanduta cu succes.Press ANY key to go back";
+        if(magazin_plante.getSize() !=0){
+            magazin_plante.show_inventory();
+            cout<<"Alege:";
+            cin>>ce;
+            try{
+                player.sell_p(ce,magazin_plante);
+                cout<<"Samanta vanduta cu succes!";
+
+            }catch(Index_Invalid &e){cout<<e.what();}
+
+        }else{cout<<"Nu ai nimic in invetar!";}
+
+        cout<<"\nPress ANY key to go back";
     }
     else{
-        inventar_mobi.show_inventory();
+        if(inventar_mobi.getSize() != 0){
+            inventar_mobi.show_inventory();
+            cout<<"Ce doresti sa vinzi?:";cin>>ce;
+            try{
+                player.sell_drop(ce,inventar_mobi);
+                cout<<"Consumabilul a fost vandut cu succes.";
 
-        cout<<"Ce doresti sa vinzi?:";cin>>ce;
-        player.sell_drop(ce,inventar_mobi);
-        cout<<"Consumabilul a fost vandut cu succes.\n Press ANY key to go back.";
+            }catch(Index_Invalid &e){cout<<e.what();}
+        }else{cout<<"Nu ai nimic in inventar!";}
+
+        cout<<"\n Press ANY key to go back.";
 
     }
 }
@@ -1833,7 +1892,7 @@ void meniu_fierar(){
     cout<<"[1] Aer\n";
     cout<<"[2] Lava\n";
     cout<<"[3] Foc\n";
-    cout<<"[4] Ghiata\n";
+    cout<<"[4] Gheata\n";
     cout<<"[5] Pamant\n";
     cout<<"[0] Exit \n";
 }
@@ -1843,33 +1902,33 @@ void fierar(Player &jucator,Inventory<Weapon> &arme){
     if(fieraro == 0){
         dialog_cu_personaje("Fierar","Nu imi pasa cine esti! Ai bani ca sa te ajut?",
                             "Vezi ca sunt un fierar asa bun incat pot sa o si stric!");
-    fieraro ++;
+        fieraro ++;
     }
-       char choise = 'p';
-        while (choise != '0') {
-            meniu_fierar();
-            choise = getch();
-            switch (choise) {
-                case '1': jucator.schimba_tipul("aer",arme); getch(); break;
-                case '2': jucator.schimba_tipul("lava",arme); getch(); break;
-                case '3': jucator.schimba_tipul("foc",arme); getch(); break;
-                case '4': jucator.schimba_tipul("ghiata",arme); getch(); break;
-                case '5': jucator.schimba_tipul("pamant",arme); getch(); break;
+    char choise = 'p';
+    while (choise != '0') {
+        meniu_fierar();
+        choise = getch();
+        switch (choise) {
+            case '1': jucator.schimba_tipul("aer",arme); getch(); break;
+            case '2': jucator.schimba_tipul("lava",arme); getch(); break;
+            case '3': jucator.schimba_tipul("foc",arme); getch(); break;
+            case '4': jucator.schimba_tipul("gheata",arme); getch(); break;
+            case '5': jucator.schimba_tipul("pamant",arme); getch(); break;
 
 
-            }
         }
-
-        cout<<"Press any key to get back\n";
-
-
     }
+
+    cout<<"Press any key to get back\n";
+
+
+}
 
 void meniu_weapon_store(){
 
     system("CLS");
     cout<<"|----------------------------------|\n";
-    cout<<"| Piata Mare din Regatul de Ghiata |\n";
+    cout<<"| Piata Mare din Regatul de Gheata |\n";
     cout<<"|----------------------------------|\n";
     cout<<"[1] Vezi Gold\n";
     cout<<"[2] Magazin de arme\n";
@@ -1971,6 +2030,7 @@ void lovitura_normala(Player &player,unique_ptr<Monster> &monstru,Inventory<Weap
                     monstru->damage_by_player(player.getArma(), player.getArma().getDamage() - 15);
                 }
             }
+
             /// 1 daca defend 0 daca dodge
         }
     }
@@ -1984,7 +2044,7 @@ void lovitura_normala(Player &player,unique_ptr<Monster> &monstru,Inventory<Weap
         mort = true;
 
     }
-
+    cout<<"\nPress ANY key to continue!";
 }
 void lovitura_speciala(Player &player,unique_ptr<Monster> &monstru,Inventory<Weapon> &inventar_arme,Inventory<Plant> &inventar_plante){
 
@@ -2069,7 +2129,7 @@ void lovitura_speciala(Player &player,unique_ptr<Monster> &monstru,Inventory<Wea
         system("CLS");
         cout<<"Nu ai mana.\n";
     }
-
+    cout<<"\nPress ANY key to continue!";
 }
 void fighting_script(Player &player,unique_ptr<Monster> &monstru,Inventory<Weapon> &inventar_arme,Inventory<Plant> &inventar_plante,
                      int &intamplare, Inventory<Drop_Item> &inventar_mobi){
@@ -2088,7 +2148,7 @@ void fighting_script(Player &player,unique_ptr<Monster> &monstru,Inventory<Weapo
         if(mort){intamplare = 0;break;}
         else if(monstru->is_dead()){intamplare = 1;break;}
     }
-    if(intamplare!=0)
+    if(intamplare!=0 and intamplare!=1)
         intamplare = 2;
 
 }
@@ -2096,9 +2156,9 @@ void fighting_script(Player &player,unique_ptr<Monster> &monstru,Inventory<Weapo
 void enter_cave(Player &player,Inventory<Weapon> &inventar_arme,Inventory<Plant> &inventar_plante, Inventory<Drop_Item> &inventar_mobi) {
     int player_lvl = player.getlevel();
     vector<unique_ptr<Monster>> cave;
-   unique_ptr<Factory> minionFactory = make_unique<Minion_Factory>();
-   unique_ptr<Factory> minionBossFactory = make_unique<Minion_Boss_Factory>();
-   unique_ptr<Factory> bossFactory = make_unique<Boss_Factory>();
+    unique_ptr<Factory> minionFactory = make_unique<Minion_Factory>();
+    unique_ptr<Factory> minionBossFactory = make_unique<Minion_Boss_Factory>();
+    unique_ptr<Factory> bossFactory = make_unique<Boss_Factory>();
     for(int i = 0; i<player_lvl;i++){
         unique_ptr<Monster> minion = unique_ptr<Monster>(minionFactory->createMonster());
         cave.push_back(std::move(minion));
@@ -2118,6 +2178,7 @@ void enter_cave(Player &player,Inventory<Weapon> &inventar_arme,Inventory<Plant>
         else{
             cout<<"\nFelicitari, ai omorat un monstru.\nIn cenusa lui ai gasit "<<cave[i]->item_dropat().GetName();
             inventar_mobi.add_to_inventory(cave[i]->item_dropat());
+            player.give_xp(100);
             getch();
         }
     }
@@ -2226,7 +2287,7 @@ void dev_menu(){
 void developer(Player &player, Farm &ferma,vector<shared_ptr<Shop>> &magazine, Inventory<Weapon> &inventar_arme, Inventory<Plant> &inventar_plante, Inventory<Drop_Item> &inventar_mobi){
     char choise = 'p';
     player.give_money(10000);
-   shared_ptr<Weapon_Shop> copy;
+    shared_ptr<Weapon_Shop> copy;
     for(auto i = magazine.begin(); i<magazine.end();i++){
         if(dynamic_cast<Weapon_Shop*>(i->get()) != nullptr){
             copy = dynamic_pointer_cast<Weapon_Shop>(*i);
@@ -2259,38 +2320,38 @@ void afis_start_menu(){
 }
 
 void start_menu(Player &player, Farm &ferma,vector<shared_ptr<Shop>> &magazine, Inventory<Weapon> &inventar_arme, Inventory<Plant> &inventar_plante, Inventory<Drop_Item> &inventar_mobi){
-char choise = 'p';
-while(choise != '0'){
-    afis_start_menu();
-    choise = getch();
-    switch(choise){
-        case '1':intro(player,ferma,magazine,inventar_arme,inventar_plante,inventar_mobi);getch();break;
-        case '2':developer(player,ferma,magazine,inventar_arme,inventar_plante,inventar_mobi);getch();break;
+    char choise = 'p';
+    while(choise != '0'){
+        afis_start_menu();
+        choise = getch();
+        switch(choise){
+            case '1':intro(player,ferma,magazine,inventar_arme,inventar_plante,inventar_mobi);getch();break;
+            case '2':developer(player,ferma,magazine,inventar_arme,inventar_plante,inventar_mobi);getch();break;
+        }
     }
-}
     exit(0);
 }
 int main() {
 
 
-      Player& jucator = Player::Instanta();
-      jucator.give_money(10000);
-      Farm ferma;
-      ferma.generate_farm();
+    Player& jucator = Player::Instanta();
+    jucator.give_money(10000);
+    Farm ferma;
+    ferma.generate_farm();
 
     vector<shared_ptr<Shop>> magazine;
-      magazine.push_back(make_shared<Plant_Shop>());
-      magazine.push_back(make_shared<Weapon_Shop>());
-      magazine[0]->citire("C:\\Users\\Darius Corneciu\\CLionProjects\\POO_Game\\plants.txt");
-      magazine[1]->citire("C:\\Users\\Darius Corneciu\\CLionProjects\\POO_Game\\arme.txt");
+    magazine.push_back(make_shared<Plant_Shop>());
+    magazine.push_back(make_shared<Weapon_Shop>());
+    magazine[0]->citire("M:\\idecpp\\proiecte\\poo game\\plans.txt");
+    magazine[1]->citire("M:\\idecpp\\proiecte\\poo game\\arme.txt");
 
-      Monster::create_drop("C:\\Users\\Darius Corneciu\\CLionProjects\\POO_Game\\drop_items");
-      Inventory<Weapon> inventar_arme;
-      Inventory <Plant> inventar_plante;
-      Inventory <Drop_Item> inventar_mobi;
-      start_menu(jucator,ferma,magazine,inventar_arme,inventar_plante,inventar_mobi);
-       magazine.clear();
-     return 0;
+    Monster::create_drop("M:\\idecpp\\proiecte\\poo game\\drop_items");
+    Inventory<Weapon> inventar_arme;
+    Inventory <Plant> inventar_plante;
+    Inventory <Drop_Item> inventar_mobi;
+    start_menu(jucator,ferma,magazine,inventar_arme,inventar_plante,inventar_mobi);
+    magazine.clear();
+    return 0;
 }
 /*
 int main(){
